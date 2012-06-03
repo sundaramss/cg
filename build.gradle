@@ -1,0 +1,17 @@
+loadConfigFile();
+
+task cg << {
+//	println "package:$config"
+//	println "package:$config.project.packageName"
+//	println "source dir:$config.project.sourceDir"
+
+}
+
+def loadConfigFile() {
+	def softwareStack = hasProperty('env') ? env : 'spring_RESTful'
+	setProperty 'softwareStack', softwareStack
+	println "Software Stack is set to $softwareStack"
+	def configFile = file('config.groovy')
+	def config = new ConfigSlurper(softwareStack).parse(configFile.toURL())
+	setProperty 'config', config
+}
