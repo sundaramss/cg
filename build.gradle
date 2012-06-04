@@ -1,9 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
 loadConfigFile();
 
-task cg << {
+task "create-dirs" << {
+	webAppDir.mkdirs();
+	sourceSets*.java.srcDirs*.each { it.mkdirs() }    
+	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
+}
+
+task cg(dependsOn: 'create-dirs')  << {
 //	println "package:$config"
-//	println "package:$config.project.packageName"
-//	println "source dir:$config.project.sourceDir"
+	println "package:$config.project.packageName"
 
 }
 
