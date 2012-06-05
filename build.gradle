@@ -9,7 +9,14 @@ task "create-dirs" << {
 	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
 }
 
-task cg(dependsOn: 'create-dirs')  << {
+task "create-package"(dependsOn: 'create-dirs') << {
+	def dirlist = sourceSets*.java.srcDirs*.grep({ it.parentFile.name == 'main' } )
+	def mainJavaDir = dirlist.flatten()
+        def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
+	new File(mainJavaDir[0],packageFolder).mkdirs()
+}
+
+task cg(dependsOn: 'create-package')  << {
 //	println "package:$config"
 	println "package:$config.project.packageName"
 
