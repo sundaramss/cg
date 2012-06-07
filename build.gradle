@@ -9,14 +9,23 @@ task "create-dirs" << {
 	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
 }
 
-task "create-package"(dependsOn: 'create-dirs') << {
-	def dirlist = sourceSets*.java.srcDirs*.grep({ it.parentFile.name == 'main' } )
-	def mainJavaDir = dirlist.flatten()
+task "create-basepackage"(dependsOn: 'create-dirs') << {
+	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
         def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
-	new File(mainJavaDir[0],packageFolder).mkdirs()
+	def  baseDir =  new File(mainJavaDir,packageFolder)
+	baseDir.mkdirs()
+	project.ext.baseDir=baseDir
+        
 }
 
-task cg(dependsOn: 'create-package')  << {
+task  "create-apppackage"(dependsOn:'create-basepackage') << {
+        println project.ext.baseDir
+        println config.project.appPackage
+	def packages= config.project.appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}
+	println packages
+	//packages.each { it.mkdirs() }
+}
+task cg(dependsOn: 'create-apppackage')  << {
 //	println "package:$config"
 	println "package:$config.project.packageName"
 
