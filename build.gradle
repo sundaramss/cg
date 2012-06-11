@@ -4,31 +4,37 @@ apply plugin: 'war'
 loadConfigFile();
 
 task "create-dirs" << {
+    println "Create Java Base Layout"
 	webAppDir.mkdirs();
 	sourceSets*.java.srcDirs*.each { it.mkdirs() }    
 	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
 }
 
 task "create-basepackage"(dependsOn: 'create-dirs') << {
+	println "Create app Base package"
 	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
-        def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
+    def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
-        
+    def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service]
+	def packages= appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
+	println project.ext.baseDir  
 }
 
-task  "create-apppackage"(dependsOn:'create-basepackage') << {
-        println project.ext.baseDir
-        println config.project.appPackage
-	def packages= config.project.appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}
-	println packages
-	//packages.each { it.mkdirs() }
+task  "copy-base" (dependsOn: 'create-basepackage') <<{
+		def modelPath = project.ext.baseDir.path + File.separator +config.project.model
+		copy {
+			 from 'templates/model'
+			 into  modelPath
+			 expand(project:project,config:config)
+		}
 }
-task cg(dependsOn: 'create-apppackage')  << {
-//	println "package:$config"
+
+
+
+task cg(dependsOn: 'copy-base')  << {
 	println "package:$config.project.packageName"
-
 }
 
 def loadConfigFile() {

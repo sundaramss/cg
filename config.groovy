@@ -1,8 +1,11 @@
 project{
+	 author='sundaramss'
      packageName='com.xyz.srf'
-     appPackage = ['model','model/value','service','controller']
+     model='model'
+     modelvalue='model.value'
+     service='service'
+     controller='controller'
 }
 softwareStack{
-        spring_RESTful{
-	}
+        spring_RESTful{	}
 }
