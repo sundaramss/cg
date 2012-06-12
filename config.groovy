@@ -1,4 +1,5 @@
 project{
+	 name='empapp'
 	 author='sundaramss'
      packageName='com.xyz.srf'
      model='model'

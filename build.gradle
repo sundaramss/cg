@@ -5,13 +5,16 @@ loadConfigFile();
 
 task "create-dirs" << {
     println "Create Java Base Layout"
+	
 	webAppDir.mkdirs();
 	sourceSets*.java.srcDirs*.each { it.mkdirs() }    
 	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
+	
 }
 
 task "create-basepackage"(dependsOn: 'create-dirs') << {
 	println "Create app Base package"
+	
 	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
     def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
 	def  baseDir =  new File(mainJavaDir,packageFolder)
@@ -19,32 +22,33 @@ task "create-basepackage"(dependsOn: 'create-dirs') << {
 	project.ext.baseDir=baseDir
     def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service,config.project.constant]
 	def packages= appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
-	println project.ext.baseDir  
+	
 }
 
 task  "copy-base" (dependsOn: 'create-basepackage') << {
-
-		def paths = [ 'constant':config.project.constant,
-					  'model':config.project.model,
-					  'modelvalue':config.project.modelvalue.replaceAll('\\.',File.separator),
-					  'service':config.project.service,
-					  'controller':config.project.controller
+		println "Copy template base sources"
+		
+		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
+					  'model': project.ext.baseDir.path + File.separator + config.project.model,
+					  'modelvalue':project.ext.baseDir.path + File.separator + config.project.modelvalue.replaceAll('\\.',File.separator),
+					  'service':project.ext.baseDir.path + File.separator + config.project.service,
+					  'controller':project.ext.baseDir.path + File.separator + config.project.controller,
+					  'webapps' : webAppDir.path
 					 ]
 					 
-		paths.each {  template_path, path ->
-			
-			def srcPath = project.ext.baseDir.path + File.separator + path
+		paths.each {  template_path, srcPath ->
 			copy {
 				 from "templates/${template_path}"
 				 into  srcPath
 				 expand(project:project,config:config)
+				 rename { String fileName ->
+					fileName.replace('-appname-', "-$config.project.name-")
+				 }
 			}
 		
 		} 			   		
 				
 }
-
-
 
 task cg(dependsOn: 'copy-base')  << {
 	println "package:$config.project.packageName"
