@@ -17,16 +17,24 @@ task "create-basepackage"(dependsOn: 'create-dirs') << {
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
-    def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service]
+    def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service,config.project.constant]
 	def packages= appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
 	println project.ext.baseDir  
 }
 
-task  "copy-base" (dependsOn: 'create-basepackage') <<{
+task  "copy-base" (dependsOn: 'create-basepackage') << {
+
 		def modelPath = project.ext.baseDir.path + File.separator +config.project.model
 		copy {
 			 from 'templates/model'
 			 into  modelPath
+			 expand(project:project,config:config)
+		}
+		
+		def constantPath = project.ext.baseDir.path + File.separator +config.project.constant
+		copy {
+			 from 'templates/constant'
+			 into  constantPath
 			 expand(project:project,config:config)
 		}
 }

@@ -5,6 +5,7 @@ project{
      modelvalue='model.value'
      service='service'
      controller='controller'
+     constant='constant'
      persistenceUnitName="xyzUnit"
 }
 softwareStack{

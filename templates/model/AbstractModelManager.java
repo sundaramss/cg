@@ -159,7 +159,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         
         if(totalRecords == 0) {
             Map map = new HashMap();
-            map.put("ENTITY_LIST", Collections.EMPTY_LIST);
+            map.put(ApplicationConstant.ENTITY_LIST, Collections.EMPTY_LIST);
             map.put(ApplicationConstant.TOTAL_NO_RECORDS, 0);
             return map;
         }
@@ -206,7 +206,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         
         List<M> entityList = typedQuery.getResultList();
         Map map = new HashMap();
-        map.put("ENTITY_LIST", entityList);
+        map.put(ApplicationConstant.ENTITY_LIST, entityList);
         map.put(ApplicationConstant.TOTAL_NO_RECORDS, totalRecords);
                 
         return map;
