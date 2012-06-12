@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import ${config.project.packageName}.constant.ApplicationConstant;
-
+import ${config.project.packageName}.model.value.ModelValueBean;
 
 /**
  *

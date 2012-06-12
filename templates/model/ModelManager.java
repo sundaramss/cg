@@ -2,7 +2,8 @@ package ${config.project.packageName}.${config.project.model};
 
 import java.util.List;
 import java.util.Map;
-
+import ${config.project.packageName}.model.value.ModelValueBean;
+import ${config.project.packageName}.model.value.SortOrderValue;
 /**
  *
  * @author ${config.project.author}

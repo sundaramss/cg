@@ -1,6 +1,7 @@
 package ${config.project.packageName}.${config.project.model};
 
 import java.io.Serializable;
+import ${config.project.packageName}.model.value.ModelValueBean;
 
 /**
  *

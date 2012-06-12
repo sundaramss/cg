@@ -1,5 +1,7 @@
 package ${config.project.packageName}.${config.project.model};
 
+import ${config.project.packageName}.model.value.ModelValueBean;
+
 /**
  *
  * @author ${config.project.author}
