@@ -31,6 +31,13 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 			 expand(project:project,config:config)
 		}
 		
+		def modelValuePath = project.ext.baseDir.path + File.separator +config.project.modelvalue.replaceAll('\\.',File.separator)
+		copy {
+			 from 'templates/modelvalue'
+			 into  modelValuePath
+			 expand(project:project,config:config)
+		}
+				
 		def constantPath = project.ext.baseDir.path + File.separator +config.project.constant
 		copy {
 			 from 'templates/constant'
