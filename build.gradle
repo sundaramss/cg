@@ -24,26 +24,24 @@ task "create-basepackage"(dependsOn: 'create-dirs') << {
 
 task  "copy-base" (dependsOn: 'create-basepackage') << {
 
-		def modelPath = project.ext.baseDir.path + File.separator +config.project.model
-		copy {
-			 from 'templates/model'
-			 into  modelPath
-			 expand(project:project,config:config)
-		}
+		def paths = [ 'constant':config.project.constant,
+					  'model':config.project.model,
+					  'modelvalue':config.project.modelvalue.replaceAll('\\.',File.separator),
+					  'service':config.project.service,
+					  'controller':config.project.controller
+					 ]
+					 
+		paths.each {  template_path, path ->
+			
+			def srcPath = project.ext.baseDir.path + File.separator + path
+			copy {
+				 from "templates/${template_path}"
+				 into  srcPath
+				 expand(project:project,config:config)
+			}
 		
-		def modelValuePath = project.ext.baseDir.path + File.separator +config.project.modelvalue.replaceAll('\\.',File.separator)
-		copy {
-			 from 'templates/modelvalue'
-			 into  modelValuePath
-			 expand(project:project,config:config)
-		}
+		} 			   		
 				
-		def constantPath = project.ext.baseDir.path + File.separator +config.project.constant
-		copy {
-			 from 'templates/constant'
-			 into  constantPath
-			 expand(project:project,config:config)
-		}
 }
 
 
