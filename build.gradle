@@ -15,19 +15,21 @@ task "create-dirs" << {
 task "create-basepackage"(dependsOn: 'create-dirs') << {
 	println "Create app Base package"
 	
+	def config = project.ext.config
 	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
-    def packageFolder=config.project.packageName.replaceAll('\\.',File.separator) 
+    def packageFolder= config.project.packageName.replaceAll('\\.',File.separator) 
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
     def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service,config.project.constant]
-	def packages= appPackage.collect { f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
+	def packages= appPackage.collect { def f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
 	
 }
 
 task  "copy-base" (dependsOn: 'create-basepackage') << {
 		println "Copy template base sources"
-		
+	
+		def config = project.ext.config	
 		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
 					  'model': project.ext.baseDir.path + File.separator + config.project.model,
 					  'modelvalue':project.ext.baseDir.path + File.separator + config.project.modelvalue.replaceAll('\\.',File.separator),
@@ -56,9 +58,7 @@ task cg(dependsOn: 'copy-base')  << {
 
 def loadConfigFile() {
 	def softwareStack = hasProperty('env') ? env : 'spring_RESTful'
-	setProperty 'softwareStack', softwareStack
-	println "Software Stack is set to $softwareStack"
 	def configFile = file('config.groovy')
 	def config = new ConfigSlurper(softwareStack).parse(configFile.toURL())
-	setProperty 'config', config
+	project.ext.config = config
 }
