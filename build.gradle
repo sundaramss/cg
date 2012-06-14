@@ -22,8 +22,23 @@ task "create-basepackage"(dependsOn: 'create-dirs') << {
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
-    def appPackage = [config.project.model,config.project.modelvalue.replaceAll('\\.',File.separator),config.project.controller,config.project.service,config.project.constant]
-	def packages= appPackage.collect { def f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
+	
+    def appPackage = [	config.project.model,
+						config.project.modelvalue.replaceAll('\\.',File.separator),
+						config.project.controller,
+						config.project.service,
+						config.project.constant
+					] 
+    def subsystemPackages = config.project.subsystems.collect{ subsystem -> 
+        [ subsystem+File.separator+config.project.model,
+          subsystem+File.separator+config.project.modelvalue.replaceAll('\\.',File.separator),
+          subsystem+File.separator+config.project.controller,
+          subsystem+File.separator+config.project.service
+        ]
+    }
+    	
+    def packages = appPackage + subsystemPackages.flatten()				
+	def packagesFiles= packages.collect { def f= new File(project.ext.baseDir,it); f.mkdirs(); f}  
 	
 }
 

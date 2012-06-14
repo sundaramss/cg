@@ -16,7 +16,7 @@
 
 	<context:property-placeholder location="classpath*:META-INF/spring/*.properties" />
 	<% def subsystemServicePackages = config.project.subsystems.collect{ subsystem -> 
-			"${config.project.packageName}.${subsystem}management.service.impl"
+			"${config.project.packageName}.${subsystem}.service.impl"
 	   }
 	%><context:component-scan
 		base-package="<%=subsystemServicePackages.join(',')%>">

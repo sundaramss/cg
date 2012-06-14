@@ -4,7 +4,7 @@
   <persistence-unit name="${config.project.persistenceUnitName}" transaction-type="RESOURCE_LOCAL">
     <jta-data-source>${config.project.jtaDatasource}</jta-data-source>
     <%def models = modelData.collect{ mData -> 
-		"<class>${config.project.packageName}.${mData.subsystem}management.model.${mData.class}</class>"
+		"<class>${config.project.packageName}.${mData.subsystem}.model.${mData.class}</class>"
     }
     %><%=models.join('\n\t')%>
     <properties>
