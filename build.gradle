@@ -66,15 +66,24 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 				 rename { String fileName ->
 					fileName.replace('appname', "$config.project.name")
 				 }
+				 exclude "**/*.template"
 			}
 		
 		} 			   		
-		
-				
 }
 
 task cg(dependsOn: 'copy-base')  << {
-	println "package:$config.project.packageName"
+	
+	project.ext.modelData.each { modelData ->
+	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
+	      copy {
+			  from "templates/model"
+			  into subsystemModelPackage
+			  expand(project:project,config:config,modelData:modelData)
+			  rename '.*', "${modelData.className}.java"
+			  include "**/ModelName.java.template"
+	      }	
+	}
 	
 }
 
@@ -90,4 +99,10 @@ def loadData() {
 	def slurper = new groovy.json.JsonSlurper()
 	tree = fileTree(dir: 'modeldata', include: '**/*.json')
 	project.ext.modelData =  tree.collect { File file ->  slurper.parseText(file.text)}
+}
+
+class ModelHelper {
+	def columns(){
+		println "From ModelHelper"
+	}
 }
