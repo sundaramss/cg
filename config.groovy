@@ -8,7 +8,11 @@ project{
      controller='controller'
      constant='constant'
      persistenceUnitName="xyzUnit"
+     jtaDatasource="java:/xyzDatasource"
+     hibernateDialect="org.hibernate.dialect.MySQL5Dialect"
+     subsystems=['masterdatamanagement','empmanagement']
 }
+
 softwareStack{
         spring_RESTful{	}
 }

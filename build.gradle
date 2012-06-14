@@ -30,12 +30,15 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		println "Copy template base sources"
 	
 		def config = project.ext.config	
+		def resources = sourceSets['main'].resources.srcDirs.iterator()[0]
+		
 		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
 					  'model': project.ext.baseDir.path + File.separator + config.project.model,
 					  'modelvalue':project.ext.baseDir.path + File.separator + config.project.modelvalue.replaceAll('\\.',File.separator),
 					  'service':project.ext.baseDir.path + File.separator + config.project.service,
 					  'controller':project.ext.baseDir.path + File.separator + config.project.controller,
-					  'webapps' : webAppDir.path
+					  'webapps' : webAppDir.path,
+					  'resources': resources.path
 					 ]
 					 
 		paths.each {  template_path, srcPath ->
@@ -44,17 +47,19 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 				 into  srcPath
 				 expand(project:project,config:config)
 				 rename { String fileName ->
-					fileName.replace('-appname-', "-$config.project.name-")
+					fileName.replace('appname', "$config.project.name")
 				 }
 			}
 		
 		} 			   		
+		
 				
 }
 
 task cg(dependsOn: 'copy-base')  << {
 	println "package:$config.project.packageName"
 }
+
 
 def loadConfigFile() {
 	def softwareStack = hasProperty('env') ? env : 'spring_RESTful'
