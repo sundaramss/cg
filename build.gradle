@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'war'
 
 loadConfigFile();
+loadData();
 
 task "create-dirs" << {
     println "Create Java Base Layout"
@@ -30,6 +31,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		println "Copy template base sources"
 	
 		def config = project.ext.config	
+		def modelData = project.ext.modelData
 		def resources = sourceSets['main'].resources.srcDirs.iterator()[0]
 		
 		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
@@ -45,7 +47,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 			copy {
 				 from "templates/${template_path}"
 				 into  srcPath
-				 expand(project:project,config:config)
+				 expand(project:project,config:config,modelData:modelData)
 				 rename { String fileName ->
 					fileName.replace('appname', "$config.project.name")
 				 }
@@ -58,6 +60,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 
 task cg(dependsOn: 'copy-base')  << {
 	println "package:$config.project.packageName"
+	
 }
 
 
@@ -66,4 +69,10 @@ def loadConfigFile() {
 	def configFile = file('config.groovy')
 	def config = new ConfigSlurper(softwareStack).parse(configFile.toURL())
 	project.ext.config = config
+}
+
+def loadData() {
+	def slurper = new groovy.json.JsonSlurper()
+	tree = fileTree(dir: 'modeldata', include: '**/*.json')
+	project.ext.modelData =  tree.collect { File file ->  slurper.parseText(file.text)}
 }
