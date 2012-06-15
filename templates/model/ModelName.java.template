@@ -54,6 +54,26 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	@Type(type = "java.lang.String")
 	private String modifiedBy;
 
+
+	private ${modelData.className}() {
+
+	}
+
+	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
+		saveValue(${classRef}Value);
+		setCreatedBy(${classRef}Value.getCreatedBy());
+		setCreatedDate(new Date());
+	}
+	<% modelData.columns.each {  column -> %>
+	
+	protected  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
+		return this.<%=modelHelper.getVariableRef(column)%>;
+	}
+	
+	protected  void  <%=modelHelper.setter(column)%>(<%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>) {
+		this.<%=modelHelper.getVariableRef(column)%>=<%=modelHelper.getVariableRef(column)%>;
+	}	
+	<%}%>
 	protected ${modelData.pk.type} getSkGuid() {
 		return skGuid;
 	}
@@ -61,6 +81,8 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	protected void setSkGuid(${modelData.pk.type} skGuid) {
 		this.skGuid = skGuid;
 	}
+	
+	
 
 	protected Date getCreatedDate() {
 		return createdDate;
@@ -94,23 +116,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		this.modifiedBy = modifiedBy;
 	}
 
-	private ${modelData.className}() {
-
-	}
-
-	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
-		saveValue(${classRef}Value);
-		setCreatedBy(${classRef}Value.getCreatedBy());
-		setCreatedDate(new Date());
-	}
+	
 
 	@Override
 	public void saveValue(${modelData.className}Value ${classRef}Bean) {
-		
+		<%modelData.columns.each {  column -> %>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Bean.<%=modelHelper.getter(column)%>();
+		<%}%>
 	}
 
 	@Override
 	public void updateValue(${modelData.className}Value ${classRef}Bean) {
+	    saveValue(${classRef}Bean);
 		setModifiedBy(${classRef}Bean.getModifiedBy());
 		setModifiedDate(new Date());
 	}
@@ -120,6 +136,8 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 		${modelData.className}Value ${classRef}Value = new ${modelData.className}Value();
 		${classRef}Value.setSkGuid(getSkGuid());
+        <% modelData.columns.each {  column -> %>	${classRef}Bean.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}%>
 
 		return ${classRef}Value;
 	}

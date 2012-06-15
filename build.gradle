@@ -113,6 +113,7 @@ class ModelHelper {
 		'java.lang.Long','long',Long,
 		'java.util.Date','Date'
 	]
+	
 	def sqljavatypes = [ 
 		'string':'java.lang.String',
 		'integer':'java.lang.Integer',
@@ -134,6 +135,21 @@ class ModelHelper {
 	}
 	def getVariableType(column){
 		column.type.split('\\.')[-1]
+	}
+	
+	def getter(column){
+		def typeName = getVariableType(column)
+		def prefix = (typeName.toLowerCase() == 'boolean') ? 'is' : 'get'
+		def property = column.name[0].toUpperCase()+column.name[1..-1]
+		"$prefix$property"
+	}
+	def setter(column){
+		def property = column.name[0].toUpperCase()+column.name[1..-1]
+		"set$property"
+	}
+	def getTypeName(column) {
+		def type = column.type.split('\\.')[-1]
+		def typeName = type[0].toUpperCase()+type[1..-1]
 	}
 	
 	def getVariableRef(column){
