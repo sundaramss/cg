@@ -74,12 +74,13 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 
 task cg(dependsOn: 'copy-base')  << {
 	
+	def modelHelper = new ModelHelper()
 	project.ext.modelData.each { modelData ->
 	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
 	      copy {
 			  from "templates/model"
 			  into subsystemModelPackage
-			  expand(project:project,config:config,modelData:modelData)
+			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
 			  rename '.*', "${modelData.className}.java"
 			  include "**/ModelName.java.template"
 	      }	
@@ -102,7 +103,41 @@ def loadData() {
 }
 
 class ModelHelper {
-	def columns(){
-		println "From ModelHelper"
+
+	def ignorePackage = [
+		'java.lang.String','String',
+		'java.lang.Boolean','boolean','Boolean',
+		'java.lang.Double','double','Double',
+		'java.lang.Float','float','Float',
+		'java.lang.Integer','int','Integer',
+		'java.lang.Long','long',Long,
+		'java.util.Date','Date'
+	]
+	def sqljavatypes = [ 
+		'string':'java.lang.String',
+		'integer':'java.lang.Integer',
+		'int':'java.lang.Integer',
+		'long':'java.lang.Long',
+		'double':'java.lang.Double',
+		'date': 'java.sql.Timestamp'
+	]	
+	
+	
+	def importPackage(columns){
+		colTypes = columns.collect { it.type }
+		colTypes - ignorePackage
 	}
+	
+	def getJavaType(column) {
+		def type = column.type.split('\\.')[-1].toLowerCase()
+		sqljavatypes[type]
+	}
+	def getVariableType(column){
+		column.type.split('\\.')[-1]
+	}
+	
+	def getVariableRef(column){
+		column.name[0].toLowerCase()+column.name[1..-1]
+	}
+	
 }

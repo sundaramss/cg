@@ -1,0 +1,150 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${modelData.subsystem}.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+import org.hibernate.annotations.Type;
+
+import ${config.project.packageName}.model.AbstractModel;
+
+/**
+ * 
+ * @author ${config.project.author}
+ * 
+ */
+@Entity
+@Table(name = "${modelData.tableName}")
+public class ${modelData.className} extends AbstractModel<${modelData.className}Value> {
+
+	@Id
+	@GeneratedValue
+	@Column(name = "${modelData.pk.colName}")
+	private ${modelData.pk.type} skGuid;
+	
+	<% modelData.columns.each {  column -> %>
+	@Column(name = "${column.colName}" )
+	@Type(type = "<%=modelHelper.getJavaType(column)%>")
+	private <%=modelHelper.getVariableType(column)%>  modelHelper.getVariableRef(column);
+	<%}%>
+	    
+	@Column(name = "created_date")
+	@Type(type = "java.sql.Timestamp")
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@Column(name = "modified_date")
+	@Type(type = "java.sql.Timestamp")
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+
+	@Column(name = "created_by")
+	@Type(type = "java.lang.String")
+	private String createdBy;
+
+	@Column(name = "modified_by")
+	@Type(type = "java.lang.String")
+	private String modifiedBy;
+
+	protected ${modelData.pk.type} getSkGuid() {
+		return skGuid;
+	}
+
+	protected void setSkGuid(${modelData.pk.type} skGuid) {
+		this.skGuid = skGuid;
+	}
+
+	protected Date getCreatedDate() {
+		return createdDate;
+	}
+
+	protected void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	protected Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	protected void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	protected String getCreatedBy() {
+		return createdBy;
+	}
+
+	protected void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	protected String getModifiedBy() {
+		return modifiedBy;
+	}
+
+	protected void setModifiedBy(String modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
+	private ${modelData.className}() {
+
+	}
+
+	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
+		saveValue(${classRef}Value);
+		setCreatedBy(${classRef}Value.getCreatedBy());
+		setCreatedDate(new Date());
+	}
+
+	@Override
+	public void saveValue(${modelData.className}Value ${classRef}Bean) {
+		
+	}
+
+	@Override
+	public void updateValue(${modelData.className}Value ${classRef}Bean) {
+		setModifiedBy(${classRef}Bean.getModifiedBy());
+		setModifiedDate(new Date());
+	}
+
+	@Override
+	public ${modelData.className}Value getValue() {
+
+		${modelData.className}Value ${classRef}Value = new ${modelData.className}Value();
+		${classRef}Value.setSkGuid(getSkGuid());
+
+		return ${classRef}Value;
+	}
+
+	@Override
+	public boolean equals(Object thatObj) {
+
+		if (thatObj == null) {
+			return false;
+		}
+
+		if (getClass() != thatObj.getClass()) {
+			return false;
+		}
+
+		final ${modelData.className} that = (${modelData.className}) thatObj;
+
+		return (that.${classRef} == this.${classRef});
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		hash = 31 * hash ;
+		return hash;
+	}
+	
+}

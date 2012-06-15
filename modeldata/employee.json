@@ -4,7 +4,8 @@
 	"tableName":"T_EMP_EMPLOYEE",
 	"pk" : { "colName" : "emp_sk_guid", "type" :"String" },
 	"columns" : [ {"name":"id", "colName":"emp_id","type":"String","lpk":"true"} ,
-				  {"name":"name","colName":"emp_name","type":"String"}, 
+				  {"name":"firstName","colName":"emp_first_name","type":"String"}, 
+				  {"name":"lastName","colName":"emp_last_name","type":"String"}, 
 				  {"name":"doj","colName":"emp_doj","type":"java.util.Date"},
 				  {"name":"salary","colName":"emp_salary","type":"double"}
 	            ]
