@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
-
+import ${config.project.packageName}.${modelData.subsystem}.model.${modelData.className}Value;
 /**
  * 
  * @author ${config.project.author}
@@ -154,14 +154,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		}
 
 		final ${modelData.className} that = (${modelData.className}) thatObj;
-
-		return (that.${classRef} == this.${classRef});
+		<% def pkforEquals = modelData.columns.findAll { column -> column.lpk  } %>
+		return (<%=modelHelper.getequals(pkforEquals).join(" && ")%>);
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash = 31 * hash ;
+		<% def pks = modelData.columns.findAll { column -> column.lpk  } 
+           pks.each { column ->%>
+		hash = 31 * hash + <%=modelHelper.getHash(column)%>
+        <%}%>
 		return hash;
 	}
 	

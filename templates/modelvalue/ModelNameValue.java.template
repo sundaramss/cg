@@ -1,0 +1,76 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${modelData.subsystem}.model.value;
+
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Dataset;
+import ${config.project.packageName}.model.AbstractModelValueBean;
+
+@XmlRootElement(name = "${classRef}Value")
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class ${modelData.className}Value extends AbstractModelValueBean<${modelData.className}Dataset>{
+
+	<% modelData.columns.each {  column -> %>
+	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
+	<%}%>
+	
+	@XmlTransient
+	@JsonIgnore
+	@Override
+	public ${modelData.className}Dataset getBusinessKeyDataset() {
+		return ${modelData.className}Dataset.BUSINESS_KEY;
+	}
+
+	public static enum ${modelData.className}Dataset implements Serializable {
+
+		BUSINESS_KEY, ALL;
+
+	}
+
+	<% modelData.columns.each {  column -> %>
+	
+	public  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
+		return this.<%=modelHelper.getVariableRef(column)%>;
+	}
+	
+	public  void  <%=modelHelper.setter(column)%>(<%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>) {
+		this.<%=modelHelper.getVariableRef(column)%>=<%=modelHelper.getVariableRef(column)%>;
+	}	
+	<%}%>
+	
+	@Override
+	public boolean equals(Object thatObj) {
+
+		if (thatObj == null) {
+			return false;
+		}
+
+		if (getClass() != thatObj.getClass()) {
+			return false;
+		}
+
+		final ${modelData.className} that = (${modelData.className}) thatObj;
+		<% def pkforEquals = modelData.columns.findAll { column -> column.lpk  } %>
+		return (<%=modelHelper.getequals(pkforEquals).join(" && ")%>);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		<% def pks = modelData.columns.findAll { column -> column.lpk  } 
+           pks.each { column ->%>
+		hash = 31 * hash + <%=modelHelper.getHash(column)%>
+        <%}%>
+		return hash;
+	}
+
+	
+}

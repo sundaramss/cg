@@ -86,6 +86,17 @@ task cg(dependsOn: 'copy-base')  << {
 	      }	
 	}
 	
+	project.ext.modelData.each { modelData ->
+	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + 'model/value'
+	      println subsystemModelPackage
+	      copy {
+			  from "templates/modelvalue"
+			  into subsystemModelPackage
+			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
+			  rename '.*', "${modelData.className}Value.java"
+			  include "**/ModelNameValue.java.template"
+	      }	
+	}
 }
 
 
@@ -103,7 +114,8 @@ def loadData() {
 }
 
 class ModelHelper {
-
+	
+	def premitives = ['int','long','float','double']
 	def ignorePackage = [
 		'java.lang.String','String',
 		'java.lang.Boolean','boolean','Boolean',
@@ -143,10 +155,12 @@ class ModelHelper {
 		def property = column.name[0].toUpperCase()+column.name[1..-1]
 		"$prefix$property"
 	}
+	
 	def setter(column){
 		def property = column.name[0].toUpperCase()+column.name[1..-1]
 		"set$property"
 	}
+	
 	def getTypeName(column) {
 		def type = column.type.split('\\.')[-1]
 		def typeName = type[0].toUpperCase()+type[1..-1]
@@ -155,5 +169,31 @@ class ModelHelper {
 	def getVariableRef(column){
 		column.name[0].toLowerCase()+column.name[1..-1]
 	}
+
+	def getequals(columns) {
+		def pks = []
+		columns.each { column ->
+		    if ( column.name in premitives ) {
+			  pks <<  "this.${column.name} == that.${column.name}"
+			}else {
+			  pks << "this.${column.name}.equals(that.${column.name})"
+			}
+		}
+		return pks
+	}
 	
+	def getHash(column) {
+
+	    def indexOf = column.type.indexOf('.')
+	    def casting = ""
+		def hash = ""
+	    if(indexOf == 0 ) {
+	       casting = (column.type in premitives) ? "(int)" : "" 
+	    } else {
+			hash = ".hashCode()"
+	    }
+	    
+		return "${casting} this.${column.name}${hash}"
+	    
+	}
 }
