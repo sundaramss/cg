@@ -40,4 +40,9 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
+	<bean id="serviceLocator" scope="singleton" class="${config.project.packageName}.service.ServiceLocator" />
+    <% modelData.each { mData ->
+    def classRef = mData.className[0].toLowerCase()+mData.className[1..-1] %>
+    <bean id="${classRef}Manager"	class="${config.project.packageName}.${mData.subsystem}.model.${mData.className}Manager"	factory-method="getInstance" />
+   <%}%>
 </beans>

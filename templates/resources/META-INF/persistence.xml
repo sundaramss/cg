@@ -3,10 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
   <persistence-unit name="${config.project.persistenceUnitName}" transaction-type="RESOURCE_LOCAL">
     <jta-data-source>${config.project.jtaDatasource}</jta-data-source>
-    <%def models = modelData.collect{ mData -> 
-		"<class>${config.project.packageName}.${mData.subsystem}.model.${mData.className}</class>"
-    }
-    %><%=models.join('\n\t')%>
+    <% modelData.each{ mData -> %> 
+		<class>${config.project.packageName}.${mData.subsystem}.model.${mData.className}</class>
+    <%}%>
     <properties>
          <property name="hibernate.dialect" value="${config.project.hibernateDialect}"/>
          <property name="hibernate.show_sql" value="true"/>
