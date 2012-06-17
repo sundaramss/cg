@@ -1,0 +1,62 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${modelData.subsystem}.model;
+
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value.${modelData.className}Dataset;
+import ${config.project.packageName}.model.AbstractModelManager;
+
+public class ${modelData.className}Manager  extends AbstractModelManager<${modelData.className},${modelData.className}Value,${modelData.className}Value.${modelData.className}Dataset>{
+
+	private static ${modelData.className}Manager INSTANCE = null;
+
+	private ${modelData.className}Manager() {
+		super();
+	}
+
+	public static ${modelData.className}Manager getInstance() {
+
+		if (INSTANCE == null) {
+			INSTANCE = new ${modelData.className}Manager();
+		}
+
+		return INSTANCE;
+	}
+	
+	@Override
+	protected void appendCriteria(${modelData.className}Value ${classRef}Value, CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery, ${modelData.className}Dataset dataset, Root<${modelData.className}> root,List<Predicate> andCriteriaList) {
+		switch (dataset) {
+		case BUSINESS_KEY:
+			Path<String> path = root.<String> get("${classRef}");
+			<% def pks = modelData.columns.findAll { column -> column.lpk  } 
+           pks.each { column ->%>
+			andCriteriaList.add(criteriaBuilder.equal(path, ${classRef}Bean.<%=modelHelper.getter(column)%>()));
+			<%}%>
+			break;
+		}		
+		
+	}
+	
+	@Override
+	public ${modelData.className} createModel(${modelData.className}Value ${classRef}Value) {
+		
+		return new ${modelData.className}(${classRef}Value);
+	}
+
+	@Override
+	protected Class<${modelData.className}> getEntityType() {
+		
+		return ${modelData.className}.class;
+	}
+
+
+}

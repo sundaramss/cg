@@ -97,6 +97,17 @@ task cg(dependsOn: 'copy-base')  << {
 			  include "**/ModelNameValue.java.template"
 	      }	
 	}
+	
+	project.ext.modelData.each { modelData ->
+	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
+	      copy {
+			  from "templates/model"
+			  into subsystemModelPackage
+			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
+			  rename '.*', "${modelData.className}Manager.java"
+			  include "**/ModelNameManager.java.template"
+	      }	
+	}
 }
 
 
