@@ -1,0 +1,10 @@
+package ${config.project.packageName}.${subsystem}.service;
+<% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] %>
+<% def modeService = modelData.collect { it.className+"Service" }%>
+/**
+ *
+ * @author  ${config.project.author}
+ */
+public interface ${subsystemName}Service extends <%=modeService.join(',')%> {
+    
+}

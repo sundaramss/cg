@@ -75,6 +75,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 task cg(dependsOn: 'copy-base')  << {
 	
 	def modelHelper = new ModelHelper()
+	
 	project.ext.modelData.each { modelData ->
 	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
 	      copy {
@@ -88,7 +89,6 @@ task cg(dependsOn: 'copy-base')  << {
 	
 	project.ext.modelData.each { modelData ->
 	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + 'model/value'
-	      println subsystemModelPackage
 	      copy {
 			  from "templates/modelvalue"
 			  into subsystemModelPackage
@@ -107,6 +107,23 @@ task cg(dependsOn: 'copy-base')  << {
 			  rename '.*', "${modelData.className}Manager.java"
 			  include "**/ModelNameManager.java.template"
 	      }	
+	}
+	
+	config.project.subsystems.each {  subsystem ->
+		
+		def modelData = project.ext.modelData.findAll { it.subsystem == subsystem }
+		def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1]
+				
+		def subsystemModelPackage =  project.ext.baseDir.path + File.separator + subsystem + File.separator + 'service'
+		println modelData
+		copy {
+		  from "templates/service"
+		  into subsystemModelPackage
+		  expand(project:project,config:config,modelData:modelData,subsystem:subsystem)
+		  rename '.*', "${subsystemName}Service.java"
+		  include "**/SubsystemService.java.template"
+		}	
+		
 	}
 }
 
