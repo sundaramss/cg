@@ -120,8 +120,11 @@ task cg(dependsOn: 'copy-base')  << {
 		  from "templates/service"
 		  into subsystemModelPackage
 		  expand(project:project,config:config,modelData:modelData,subsystem:subsystem)
-		  rename '.*', "${subsystemName}Service.java"
-		  include "**/SubsystemService.java.template"
+		  rename { String fileName ->
+				fileName.replace('Subsystem', "${subsystemName}")
+				fileName.replace('.template', '')
+		   }
+		  include "**/SubsystemService*.template"
 		}	
 		
 	}

@@ -1,0 +1,9 @@
+package ${config.project.packageName}.${subsystem}.service.impl;
+<% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] %>
+/**
+ *
+ * @author  ${config.project.author}
+ */
+public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
+    
+}
