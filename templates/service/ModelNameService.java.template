@@ -1,0 +1,21 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${subsystem}.service;
+
+import java.util.List;
+import java.util.Map;
+
+import ${config.project.packageName}.${subsystem}.model.Code;
+import ${config.project.packageName}.${subsystem}.model.CodeValue;
+import ${config.project.packageName}.exception.ApplicationException;
+import ${config.project.packageName}.model.SortOrderValue;
+
+
+public interface ${modelData.className}Service {
+
+	public Map<String, Object> get${modelData.className}Map(${modelData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList);
+
+	public ${modelData.className}Value get${modelData.className}(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	
+}

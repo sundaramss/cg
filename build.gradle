@@ -72,6 +72,18 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		} 			   		
 }
 
+task testcopy(type:Copy) {
+	
+		  from "templates/service"
+		  into 'src'
+		  def rName = 'EmployeeManagement'+'$1'
+		  rename { String fileName ->
+			fileName.replaceAll("Subsystem(.+)\\.template",rName)
+		  }
+		  include "**/SubsystemService*.template"
+
+}
+
 task cg(dependsOn: 'copy-base')  << {
 	
 	def modelHelper = new ModelHelper()
@@ -115,17 +127,32 @@ task cg(dependsOn: 'copy-base')  << {
 		def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1]
 				
 		def subsystemModelPackage =  project.ext.baseDir.path + File.separator + subsystem + File.separator + 'service'
-		println modelData
+		
 		copy {
 		  from "templates/service"
 		  into subsystemModelPackage
 		  expand(project:project,config:config,modelData:modelData,subsystem:subsystem)
+		  def rName = subsystemName+'$1'
+		  println rName
 		  rename { String fileName ->
-				fileName.replace('Subsystem', "${subsystemName}")
-				fileName.replace('.template', '')
-		   }
+			fileName.replaceAll("Subsystem(.+)\\.template",rName)
+		  }
 		  include "**/SubsystemService*.template"
 		}	
+		
+		modelData.each { mData ->
+			println mData.className
+			copy {
+			  from "templates/service"
+			  into subsystemModelPackage
+			  expand(project:project,config:config,modelData:mData,subsystem:subsystem)
+			  def rName = mData.className+'$1'
+			  rename { String fileName ->
+				fileName.replaceAll("ModelName(.+)\\.template",rName)
+			  }
+			   include "**/ModelNameService*.template"
+			}
+		}
 		
 	}
 }
