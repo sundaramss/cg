@@ -60,6 +60,8 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 
 task cg(dependsOn: 'copy-base')  << {
 	
+	println "Code Generate" 
+	
 	def modelHelper = new ModelHelper()
 	
 	def pathMap = [ 
