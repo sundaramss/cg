@@ -72,54 +72,41 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		} 			   		
 }
 
-task testcopy(type:Copy) {
-	
-		  from "templates/service"
-		  into 'src'
-		  def rName = 'EmployeeManagement'+'$1'
-		  rename { String fileName ->
-			fileName.replaceAll("Subsystem(.+)\\.template",rName)
-		  }
-		  include "**/SubsystemService*.template"
-
-}
 
 task cg(dependsOn: 'copy-base')  << {
 	
 	def modelHelper = new ModelHelper()
 	
-	project.ext.modelData.each { modelData ->
-	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
-	      copy {
-			  from "templates/model"
-			  into subsystemModelPackage
-			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
-			  rename '.*', "${modelData.className}.java"
-			  include "**/ModelName.java.template"
-	      }	
-	}
-	
-	project.ext.modelData.each { modelData ->
-	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + 'model/value'
-	      copy {
-			  from "templates/modelvalue"
-			  into subsystemModelPackage
-			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
-			  rename '.*', "${modelData.className}Value.java"
-			  include "**/ModelNameValue.java.template"
-	      }	
-	}
-	
-	project.ext.modelData.each { modelData ->
-	      def subsystemModelPackage =  project.ext.baseDir.path + File.separator + modelData.subsystem + File.separator + config.project.model
-	      copy {
-			  from "templates/model"
-			  into subsystemModelPackage
-			  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
-			  rename '.*', "${modelData.className}Manager.java"
-			  include "**/ModelNameManager.java.template"
-	      }	
-	}
+	def pathMap = [ 
+						[
+							from:'templates/model',
+							subsystemModelPackage: project.ext.baseDir.path + File.separator + '%s' + File.separator + config.project.model,
+						    renameSrc:"ModelName(.+)\\.template",
+						    include:'**/ModelName*.template'
+						],
+						[
+							from:'templates/modelvalue',
+							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'model/value',
+							renameSrc:"ModelName(.+)\\.template",
+							include:"**/ModelName*.template"
+						]
+				  ];
+
+	pathMap.each { map ->
+			project.ext.modelData.each { modelData ->
+				  def rName = modelData.className+'$1'	
+				  def subsystemModelPackage = String.format(map.subsystemModelPackage,modelData.subsystem)
+				  copy {
+					  from map.from
+					  into subsystemModelPackage
+					  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
+					  rename { String fileName ->
+							fileName.replaceAll(map.renameSrc,rName)
+					  }
+					  include map.include
+				  }	
+			}
+	}	
 	
 	config.project.subsystems.each {  subsystem ->
 		
