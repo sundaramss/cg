@@ -6,16 +6,32 @@
 import java.util.List;
 import java.util.Map;
 
-import ${config.project.packageName}.${subsystem}.model.Code;
-import ${config.project.packageName}.${subsystem}.model.CodeValue;
+import ${config.project.packageName}.${subsystem}.model.${modelData.className};
+import ${config.project.packageName}.${subsystem}.model.${modelData.className}Value;
 import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.model.SortOrderValue;
+import ${config.project.packageName}.model.FilterValue;
 
 
 public interface ${modelData.className}Service {
 
-	public Map<String, Object> get${modelData.className}Map(${modelData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList);
+	
+	public ${modelData.className}Value create(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	
+	public ${modelData.className}Value update(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	
+	public ${modelData.className}Value delete(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+		
+	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	
+	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value,FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
+    
+	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
+	
+	public List<${modelData.className}Value> get${modelData.className}ValueList(${modelData.className}Value ${classRef}Value,FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
+    
+	public List<${modelData.className}Value> get${modelData.className}ValueList(${modelData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
 
-	public ${modelData.className}Value get${modelData.className}(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	public Map<String, Object> get${modelData.className}Map(${modelData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,List<FilterValue> filterValueList);	
 	
 }

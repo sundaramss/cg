@@ -20,7 +20,10 @@ public class ServiceLocator {
 <% config.project.subsystems.each { subsystem -> 
 	def subsystemName = subsystem[0].toUpperCase() + subsystem[1..-1]%>
 	@Autowired
-	public void set${subsystemName}Service(${subsystemName}Service  ${subsystem}Service);<%}%>
+	public void set${subsystemName}Service(${subsystemName}Service  ${subsystem}Service){
+			this.${subsystem}Service = ${subsystem}Service;
+	}
+	<%}%>
 
 	<% modelData.each { mData -> %>
 	public ${mData.className}Service  get${mData.className}Service() { 
