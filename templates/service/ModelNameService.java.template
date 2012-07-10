@@ -1,6 +1,5 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
-	
 %>package ${config.project.packageName}.${subsystem}.service;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public interface ${modelData.className}Service {
 	
 	public ${modelData.className}Value update(${modelData.className}Value ${classRef}Value) throws ApplicationException;
 	
-	public ${modelData.className}Value delete(${modelData.className}Value ${classRef}Value) throws ApplicationException;
+	public void delete(${modelData.className}Value ${classRef}Value) throws ApplicationException;
 		
 	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value) throws ApplicationException;
 	

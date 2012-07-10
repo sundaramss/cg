@@ -1,9 +1,94 @@
 package ${config.project.packageName}.${subsystem}.service.impl;
-<% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] %>
+<% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] 
+	modelData.each{ mData ->
+%>
+import ${config.project.packageName}.${subsystem}.model.${mData.className};
+import ${config.project.packageName}.${subsystem}.model.${mData.className}Value;
+<%}%>
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  *
  * @author  ${config.project.author}
  */
+@Service("${subsystem}Service") 
 public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
+ 
+<%
+	modelData.each{ mData ->
+	def classRef = mData.className[0].toLowerCase()+mData.className[1..-1]
+%>	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { ApplicationException.class })	
+	public ${mData.className}Value create(${mData.className}Value ${classRef}Value) throws ApplicationException{
+	
+			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
+			${mData.className} ${classRef} = ${classRef}Manager.createModel(${classRef}Value);
+			${classRef}Manager.save(${classRef});
+			${mData.className}Value ${classRef}Value = ${classRef}.getValue();
+			return ${classRef}Value;
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { ApplicationException.class })		
+	public ${mData.className}Value update(${mData.className}Value ${classRef}Value) throws ApplicationException{
+
+			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
+			${mData.className} ${classRef} = ${classRef}Manager.lookupByPrimaryKey(${classRef}Value);
+			if( ${classRef} != null ) {
+				${classRef}.updateValue(${classRef}Value);
+			}
+			return ${classRef}Value;
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { ApplicationException.class })		
+	public void delete(${mData.className}Value ${classRef}Value) throws ApplicationException{
+	
+			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
+			${mData.className} ${classRef} = ${classRef}Manager.lookupByPrimaryKey(${classRef}Value);
+			if( ${classRef} != null ) {
+				${classRef}Manager.delete(${classRef});
+			}
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)	
+	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value) throws ApplicationException {
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
+	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value,FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException {
+	
+	}
     
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
+	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException{
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
+	public List<${mData.className}Value> get${mData.className}ValueList(${mData.className}Value ${classRef}Value,FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException{
+	
+	}
+    
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
+	public List<${mData.className}Value> get${mData.className}ValueList(${mData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException {
+	
+	}
+
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
+	public Map<String, Object> get${mData.className}Map(${mData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,List<FilterValue> filterValueList) {
+	
+	}
+<%}%>		
 }
