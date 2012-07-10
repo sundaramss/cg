@@ -23,14 +23,14 @@ public interface ${modelData.className}Service {
 		
 	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value) throws ApplicationException;
 	
-	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value,FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
+	public ${modelData.className}Value get${modelData.className}Value(FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
     
-	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
+	public ${modelData.className}Value get${modelData.className}Value(List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
 	
-	public List<${modelData.className}Value> get${modelData.className}ValueList(${modelData.className}Value ${classRef}Value,FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
+	public List<${modelData.className}Value> get${modelData.className}ValueList(FilterValue filterValue,${modelData.className}Value.Dataset dataset) throws ApplicationException;
     
-	public List<${modelData.className}Value> get${modelData.className}ValueList(${modelData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
+	public List<${modelData.className}Value> get${modelData.className}ValueList(List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets) throws ApplicationException;
 
-	public Map<String, Object> get${modelData.className}Map(${modelData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,List<FilterValue> filterValueList);	
+	public Map<String, Object> get${modelData.className}Map(List<FilterValue> filterValueList,List<${modelData.className}Value.Dataset> datasets,int pageNumber, int pageSize, List<SortOrderValue> sortOrderList);	
 	
 }

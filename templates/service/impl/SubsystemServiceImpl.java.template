@@ -63,31 +63,31 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value,FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException {
+	public ${mData.className}Value get${mData.className}Value(FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException {
 	
 	}
     
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException{
+	public ${mData.className}Value get${mData.className}Value(List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException{
 	
 	}
 	
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public List<${mData.className}Value> get${mData.className}ValueList(${mData.className}Value ${classRef}Value,FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException{
+	public List<${mData.className}Value> get${mData.className}ValueList(FilterValue filterValue,${mData.className}Value.Dataset dataset) throws ApplicationException{
 	
 	}
     
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public List<${mData.className}Value> get${mData.className}ValueList(${mData.className}Value ${classRef}Value,List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException {
+	public List<${mData.className}Value> get${mData.className}ValueList(List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets) throws ApplicationException {
 	
 	}
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public Map<String, Object> get${mData.className}Map(${mData.className}Value ${classRef}Value, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,List<FilterValue> filterValueList) {
+	public Map<String, Object> get${mData.className}Map(List<FilterValue> filterValueList,List<${mData.className}Value.Dataset> datasets, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList) {
 	
 	}
 <%}%>		
