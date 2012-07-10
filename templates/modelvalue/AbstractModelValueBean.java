@@ -9,11 +9,12 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author ${config.project.author}
  */
-public abstract class AbstractModelValueBean<T extends Enum> implements  ModelValueBean<T>{
+public abstract class AbstractModelValueBean implements  ModelValueBean{
 	
-    private Long skGuid;
+    private String skGuid;
     
     private Date createdDate;
+
     @XmlTransient
     private Date modifiedDate;
     
@@ -22,13 +23,11 @@ public abstract class AbstractModelValueBean<T extends Enum> implements  ModelVa
     @XmlTransient
     private String modifiedBy;
 
-    private List<String> filtersBy;
-    
-    public Long getSkGuid() {
+    public String getSkGuid() {
         return skGuid;
     }
 
-    public void setSkGuid(Long skGuid) {
+    public void setSkGuid(String skGuid) {
         this.skGuid = skGuid;
     }
 
@@ -64,12 +63,5 @@ public abstract class AbstractModelValueBean<T extends Enum> implements  ModelVa
         this.modifiedDate = modifiedDate;
     }
 
-	public List<String> getFiltersBy() {
-		return filtersBy;
-	}
-
-	public void setFiltersBy(List<String> filtersBy) {
-		this.filtersBy = filtersBy;
-	}
    
 }

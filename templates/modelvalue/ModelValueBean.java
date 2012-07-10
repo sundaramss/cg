@@ -2,17 +2,15 @@ package ${config.project.packageName}.model.value;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.criteria.*;
 
+import ${config.project.packageName}.model.Model;
 /**
  *
  * @author ${config.project.author}
  */
-public interface ModelValueBean<T extends Enum> extends Serializable{
+public interface ModelValueBean extends Serializable{
 
-    public Long getSkGuid();
-    
-    public T getBusinessKeyDataset();
-    
-    public List<String> getFiltersBy();
+    public Predicate getBusinessKey(CriteriaBuilder criteriaBuilder,Root<? extends Model> root);
     
 }

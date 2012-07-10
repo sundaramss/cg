@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+springVersion = "3.1.1.RELEASE"
+sourceCompatibility = "1.6"
+slf4jVersion = "1.6.1"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies{
+
+    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "javax.servlet:jstl:1.1.2","taglibs:standard:1.1.2"
+    compile "javax.persistence:persistence-api:1.0.2"
+    compile "org.codehaus.jackson:jackson-mapper-asl:1.9.7"
+    compile "log4j:log4j:1.2.16"
+    runtime "log4j:log4j:1.2.16"
+
+
+}

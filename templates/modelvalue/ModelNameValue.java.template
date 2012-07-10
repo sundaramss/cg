@@ -4,6 +4,7 @@
 %>package ${config.project.packageName}.${modelData.subsystem}.model.value;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -11,8 +12,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Dataset;
-import ${config.project.packageName}.model.AbstractModelValueBean;
+import ${config.project.packageName}.model.value.AbstractModelValueBean;
 
 @XmlRootElement(name = "${classRef}Value")
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -67,7 +67,7 @@ public class ${modelData.className}Value extends AbstractModelValueBean<${modelD
 		int hash = 17;
 		<% def pks = modelData.columns.findAll { column -> column.lpk  } 
            pks.each { column ->%>
-		hash = 31 * hash + <%=modelHelper.getHash(column)%>
+		hash = 31 * hash + <%=modelHelper.getHash(column)%>;
         <%}%>
 		return hash;
 	}

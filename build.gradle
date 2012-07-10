@@ -130,6 +130,12 @@ task cg(dependsOn: 'copy-base')  << {
 	}
 }
 
+task demo(dependsOn: 'cg')  << {
+	copy {
+		from 'src'
+		into '../demo/src'
+	}
+}
 
 def loadConfigFile() {
 	def softwareStack = hasProperty('env') ? env : 'spring_RESTful'

@@ -33,7 +33,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	<% modelData.columns.each {  column -> %>
 	@Column(name = "${column.colName}" )
 	@Type(type = "<%=modelHelper.getJavaType(column)%>")
-	private <%=modelHelper.getVariableType(column)%>  modelHelper.getVariableRef(column);
+	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
 	<%}%>
 	    
 	@Column(name = "created_date")
