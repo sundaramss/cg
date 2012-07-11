@@ -163,7 +163,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		int hash = 17;
 		<% def pks = modelData.columns.findAll { column -> column.lpk  } 
            pks.each { column ->%>
-		hash = 31 * hash + <%=modelHelper.getHash(column)%>
+		hash = 31 * hash + <%=modelHelper.getHash(column)%>;
         <%}%>
 		return hash;
 	}

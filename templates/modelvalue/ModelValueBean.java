@@ -11,6 +11,8 @@ import ${config.project.packageName}.model.Model;
  */
 public interface ModelValueBean extends Serializable{
 
+	public String getSkGuid();
+	
     public Predicate getBusinessKey(CriteriaBuilder criteriaBuilder,Root<? extends Model> root);
     
 }

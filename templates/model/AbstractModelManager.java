@@ -51,7 +51,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         if (modelValue == null || modelValue.getSkGuid() == null) {
             return null;
         } else {
-            Long skGUID = modelValue.getSkGuid();
+            String skGUID = modelValue.getSkGuid();
             Class<M> type = getEntityType();
             M m = entityManager.find(type, skGUID);
             Assert.notNull(m,"Invalid SkGUID");

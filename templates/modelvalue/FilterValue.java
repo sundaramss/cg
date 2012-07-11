@@ -60,11 +60,11 @@ public class FilterValue implements Serializable{
                 predicate = criteriaBuilder.like(criteriaBuilder.upper(root.<String>get(field)), literal);
                 break;
             case  EQUAL_IGNORE_CASE:
-                Expression<String> literal = criteriaBuilder.upper(criteriaBuilder.literal(this.value));
+                literal = criteriaBuilder.upper(criteriaBuilder.literal(this.value));
                 predicate = criteriaBuilder.like(criteriaBuilder.upper(root.<String>get(field)), literal);
                 break;
             case  EQUAL:
-                Expression<String> literal = criteriaBuilder.literal(this.value);
+                literal = criteriaBuilder.literal(this.value);
                 predicate = criteriaBuilder.like(criteriaBuilder.upper(root.<String>get(field)), literal);
                 break;
         }

@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 <% config.project.subsystems.each { subsystem -> 
 	def subsystemName = subsystem[0].toUpperCase() + subsystem[1..-1]%>
-import ${config.project.packageName}.${subsystem}.${subsystemName}Service;<%}%>
+import ${config.project.packageName}.${subsystem}.service.${subsystemName}Service;<%}%>
 <% modelData.each { mData -> %>
-import ${config.project.packageName}.${mData.subsystem}.${mData.className}Service;<%}%>
+import ${config.project.packageName}.${mData.subsystem}.service.${mData.className}Service;<%}%>
 /**
  * 
  * @author ${config.project.author}

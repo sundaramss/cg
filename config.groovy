@@ -7,6 +7,7 @@ project{
      service='service'
      controller='controller'
      constant='constant'
+     exception='exception'
      persistenceUnitName="xyzUnit"
      jtaDatasource="java:/xyzDatasource"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"

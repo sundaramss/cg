@@ -6,6 +6,7 @@
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.criteria.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -13,10 +14,12 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import ${config.project.packageName}.model.value.AbstractModelValueBean;
+import ${config.project.packageName}.model.Model;
+import ${config.project.packageName}.${modelData.subsystem}.model.${modelData.className};
 
 @XmlRootElement(name = "${classRef}Value")
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ${modelData.className}Value extends AbstractModelValueBean<${modelData.className}Dataset>{
+public class ${modelData.className}Value extends AbstractModelValueBean{
 
 	<% modelData.columns.each {  column -> %>
 	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
@@ -25,8 +28,8 @@ public class ${modelData.className}Value extends AbstractModelValueBean<${modelD
 	@XmlTransient
 	@JsonIgnore
 	@Override
-	public ${modelData.className}Dataset getBusinessKeyDataset() {
-		return ${modelData.className}Dataset.BUSINESS_KEY;
+	public Predicate getBusinessKey(CriteriaBuilder criteriaBuilder, Root<? extends Model> root) {
+		return null;
 	}
 
 	public static enum ${modelData.className}Dataset implements Serializable {

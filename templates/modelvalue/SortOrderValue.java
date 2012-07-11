@@ -8,6 +8,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 
+import ${config.project.packageName}.model.Model;
 /**
  *
  * @author ${config.project.author}
