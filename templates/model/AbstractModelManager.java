@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import ${config.project.packageName}.model.value.SortOrderValue;
 import ${config.project.packageName}.constant.ApplicationConstant;
 import ${config.project.packageName}.model.value.ModelValueBean;
 
@@ -101,15 +102,11 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
-        E dataset = (E) modelValue.getBusinessKeyDataset();
         Root<M> mainRoot = criteriaQuery.from(type);
-        List<Predicate> andCriteriaList = new ArrayList<Predicate>();
-        appendCriteria(modelValue,criteriaBuilder, criteriaQuery, dataset,mainRoot,andCriteriaList);
+        Predicate businessKeyPredicate = modelValue.getBusinessKey(criteriaBuilder,mainRoot);
         try{
-        	if(! andCriteriaList.isEmpty()) {
-	        	Predicate andPredicate = criteriaBuilder.and(andCriteriaList.toArray(new Predicate[0]));
-	        	criteriaQuery.where(andPredicate);
-        	}
+            Predicate andPredicate = criteriaBuilder.and(businessKeyPredicate);
+            criteriaQuery.where(andPredicate);
             M model = entityManager.createQuery(criteriaQuery).getSingleResult();
             return model;
         }catch(NoResultException ignore) {

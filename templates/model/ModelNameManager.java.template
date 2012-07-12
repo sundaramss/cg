@@ -12,6 +12,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value.${modelData.className}Dataset;
 import ${config.project.packageName}.model.AbstractModelManager;
 
@@ -39,7 +40,7 @@ public class ${modelData.className}Manager  extends AbstractModelManager<${model
 			Path<String> path = root.<String> get("${classRef}");
 			<% def pks = modelData.columns.findAll { column -> column.lpk  } 
            pks.each { column ->%>
-			andCriteriaList.add(criteriaBuilder.equal(path, ${classRef}Bean.<%=modelHelper.getter(column)%>()));
+			andCriteriaList.add(criteriaBuilder.equal(path, ${classRef}Value.<%=modelHelper.getter(column)%>()));
 			<%}%>
 			break;
 		}		

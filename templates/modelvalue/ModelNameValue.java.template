@@ -52,15 +52,11 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 	@Override
 	public boolean equals(Object thatObj) {
 
-		if (thatObj == null) {
+		if (thatObj == null || getClass() != thatObj.getClass()) {
 			return false;
 		}
 
-		if (getClass() != thatObj.getClass()) {
-			return false;
-		}
-
-		final ${modelData.className} that = (${modelData.className}) thatObj;
+		final ${modelData.className}Value that = (${modelData.className}Value) thatObj;
 		<% def pkforEquals = modelData.columns.findAll { column -> column.lpk  } %>
 		return (<%=modelHelper.getequals(pkforEquals).join(" && ")%>);
 	}

@@ -3,6 +3,7 @@ package ${config.project.packageName}.${subsystem}.service.impl;
 	modelData.each{ mData ->
 %>
 import ${config.project.packageName}.${subsystem}.model.${mData.className};
+import ${config.project.packageName}.${subsystem}.model.${mData.className}Manager;
 import ${config.project.packageName}.${subsystem}.model.value.${mData.className}Value;
 import ${config.project.packageName}.${subsystem}.service.${subsystemName}Service;
 <%}%>
@@ -33,7 +34,7 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
 			${mData.className} ${classRef} = ${classRef}Manager.createModel(${classRef}Value);
 			${classRef}Manager.save(${classRef});
-			${mData.className}Value ${classRef}Value = ${classRef}.getValue();
+			${classRef}Value = ${classRef}.getValue();
 			return ${classRef}Value;
 	}
 	
@@ -42,7 +43,7 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	public ${mData.className}Value update(${mData.className}Value ${classRef}Value) throws ApplicationException{
 
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.lookupByPrimaryKey(${classRef}Value);
+			${mData.className} ${classRef} = ${classRef}Manager.lookupBySurrogateKey(${classRef}Value);
 			if( ${classRef} != null ) {
 				${classRef}.updateValue(${classRef}Value);
 			}
@@ -55,7 +56,7 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	public void delete(${mData.className}Value ${classRef}Value) throws ApplicationException{
 	
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.lookupByPrimaryKey(${classRef}Value);
+			${mData.className} ${classRef} = ${classRef}Manager.lookupBySurrogateKey(${classRef}Value);
 			if( ${classRef} != null ) {
 				${classRef}Manager.delete(${classRef});
 			}

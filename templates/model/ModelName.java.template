@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
-import ${config.project.packageName}.${modelData.subsystem}.model.${modelData.className}Value;
+import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value;
 /**
  * 
  * @author ${config.project.author}
@@ -119,15 +119,15 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	
 
 	@Override
-	public void saveValue(${modelData.className}Value ${classRef}Bean) {
-		<%modelData.columns.each {  column -> %>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Bean.<%=modelHelper.getter(column)%>();
+	public void saveValue(${modelData.className}Value ${classRef}Value) {
+		<%modelData.columns.each {  column -> %>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Value.<%=modelHelper.getter(column)%>();
 		<%}%>
 	}
 
 	@Override
-	public void updateValue(${modelData.className}Value ${classRef}Bean) {
-	    saveValue(${classRef}Bean);
-		setModifiedBy(${classRef}Bean.getModifiedBy());
+	public void updateValue(${modelData.className}Value ${classRef}Value) {
+	    saveValue(${classRef}Value);
+		setModifiedBy(${classRef}Value.getModifiedBy());
 		setModifiedDate(new Date());
 	}
 
@@ -136,7 +136,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 		${modelData.className}Value ${classRef}Value = new ${modelData.className}Value();
 		${classRef}Value.setSkGuid(getSkGuid());
-        <% modelData.columns.each {  column -> %>	${classRef}Bean.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <% modelData.columns.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
         <%}%>
 
 		return ${classRef}Value;
