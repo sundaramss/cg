@@ -32,10 +32,8 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	public ${mData.className}Value create(${mData.className}Value ${classRef}Value) throws ApplicationException{
 	
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.createModel(${classRef}Value);
-			${classRef}Manager.save(${classRef});
-			${classRef}Value = ${classRef}.getValue();
-			return ${classRef}Value;
+			${mData.className}Value new${mData.className}Value = ${classRef}Manager.createModel(${classRef}Value);
+			return new${mData.className}Value;
 	}
 	
 	@Override
@@ -56,10 +54,7 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	public void delete(${mData.className}Value ${classRef}Value) throws ApplicationException{
 	
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.lookupBySurrogateKey(${classRef}Value);
-			if( ${classRef} != null ) {
-				${classRef}Manager.delete(${classRef});
-			}
+			${classRef}Manager.delete(${classRef}Value);
 	
 	}
 	

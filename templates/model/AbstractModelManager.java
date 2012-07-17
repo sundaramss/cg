@@ -1,35 +1,30 @@
 package ${config.project.packageName}.${config.project.model};
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import ${config.project.packageName}.model.value.*;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
-import ${config.project.packageName}.model.value.SortOrderValue;
-import ${config.project.packageName}.constant.ApplicationConstant;
-import ${config.project.packageName}.model.value.ModelValueBean;
 
 /**
  *
  * @author @author ${config.project.author}
  */
-public abstract class AbstractModelManager<M extends Model, MB extends ModelValueBean,E extends Enum> implements ModelManager<M, MB,E> {
+public abstract class AbstractModelManager<M extends Model, MB extends ModelValueBean> implements ModelManager<M, MB> {
 
     
     
@@ -46,6 +41,30 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         this.entityManager = entityManager;
     }
 
+
+    @Override
+    public MB createModel(MB modelBean) {
+
+        M model = initializeModel(modelBean);
+        entityManager.persist(model);
+
+        return (MB) model.getValue();
+    }
+
+    protected abstract  M initializeModel(MB modelBean);
+
+    public boolean delete(MB modelValue) {
+
+        M model = lookupBySurrogateKey(modelValue);
+        if(model!=null) {
+            entityManager.remove(model);
+            return true;
+        }
+
+        return false;
+    }
+    
+
     @Transactional(readOnly = true)
     public M lookupBySurrogateKey(MB modelValue) {
         
@@ -59,42 +78,6 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
             return m;
         }
     }
-    
-    public void save(M model) {
-        entityManager.persist(model);
-    }
-    
-    public void merge(M model) {
-        entityManager.merge(model);
-    }
-    
-
-    public List<M> getAll() {
-        
-        Class<M> type = getEntityType();
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(type);
-        Root<M> from = criteriaQuery.from(type);
-        CriteriaQuery<M> select = criteriaQuery.select(from);
-        TypedQuery<M> typedQuery = entityManager.createQuery(select);
-        List<M> resultList = typedQuery.getResultList();
-        
-        return resultList;
-        
-    }
-
-    
-    public void delete(M model) {
-        entityManager.remove(model);
-    }
-
-    protected abstract void appendCriteria(MB modelBean,CriteriaBuilder criteriaBuilder,CriteriaQuery criteriaQuery,E type,Root<M> root,List<Predicate> andCriteriaList);
-    
-    protected Map<String,Join<? extends Model,? extends Model>> appendJoinCriteria(MB modelBean,CriteriaBuilder criteriaBuilder,CriteriaQuery criteriaQuery,E type,Root<M> root,List<Predicate> andCriteriaList) {
-    	return Collections.EMPTY_MAP;
-    }
-    
-    
 
     @Override
     @Transactional(readOnly = true)
@@ -103,85 +86,116 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
-        Predicate businessKeyPredicate = modelValue.getBusinessKey(criteriaBuilder,mainRoot);
+        FilterValue[] filters = modelValue.getBusinessKeys();
+        Predicate[] businessKeyPredicate = preparePredicates(modelValue,criteriaBuilder,mainRoot,filters);
         try{
             Predicate andPredicate = criteriaBuilder.and(businessKeyPredicate);
             criteriaQuery.where(andPredicate);
             M model = entityManager.createQuery(criteriaQuery).getSingleResult();
             return model;
         }catch(NoResultException ignore) {
-            
+
         }
         return null;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<M> lookupByCriteria(MB valueBean, E dataset) {
+
+
+    public List<MB> getAll(Enum... datasets) {
+        
+        Class<M> type = getEntityType();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(type);
+        Root<M> from = criteriaQuery.from(type);
+        CriteriaQuery<M> select = criteriaQuery.select(from);
+        TypedQuery<M> typedQuery = entityManager.createQuery(select);
+        List<M> resultList = typedQuery.getResultList();
+        //TODO: iterate and apply the datasets
+        List<MB> resultValueList = new ArrayList<MB>(resultList.size());
+        for(M m: resultList ) {
+            resultValueList.add((MB)m.getValue());
+        }
+        return resultValueList;
+        
+    }
+
+    protected List<M> lookupByCriteria(Serializable value,List<FilterValue> filterValueList){
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
-        List<Predicate> andCriteriaList = new ArrayList<Predicate>();
-        appendCriteria(valueBean,criteriaBuilder, criteriaQuery, dataset,mainRoot,andCriteriaList);
-        if(! andCriteriaList.isEmpty()) {
-        	Predicate andPredicate = criteriaBuilder.and(andCriteriaList.toArray(new Predicate[0]));
-        	criteriaQuery.where(andPredicate);
-    	}
-        List<M> modelList = entityManager.createQuery(criteriaQuery).getResultList();
-        return modelList;
+
+        FilterValue[] filters = filterValueList.toArray(new FilterValue[0]);
+        Predicate[] predicates = preparePredicates(value,criteriaBuilder,mainRoot,filters);
+        //TODO needs to improve join, or,group conditions
+        if( predicates.length > 0 ) {
+            Predicate andPredicate = criteriaBuilder.and(predicates);
+            criteriaQuery.where(andPredicate);
+        }
+
+        List<M> resultList = entityManager.createQuery(criteriaQuery).getResultList();
+        return  resultList;
     }
     
-    
-    @Transactional(readOnly = true,propagation=Propagation.REQUIRED)
-    public Map lookupByCriteria(MB valueBean, int pageNumber, int pageSize, E dataSetType, List<SortOrderValue> sortOrderList) {
-    	
+    @Override
+    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasets){
+
+
+        List<M> resultList = lookupByCriteria(value,filterValueList);
+        //TODO: iterate and apply the datasets
+        List<MB> resultValueList = new ArrayList<MB>(resultList.size());
+        for(M m: resultList ) {
+            resultValueList.add((MB)m.getValue());
+        }
+
+        return  resultValueList;
+    }
+
+    protected Page<M> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList, List<SortOrderValue> sortOrderList) {
+
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaCountQuery = criteriaBuilder.createQuery(Long.class);
         Root<M> root = criteriaCountQuery.from(type);
-        
         criteriaCountQuery.select(criteriaBuilder.count(root));
-        
-        List<Predicate> andCriteriaList = new ArrayList<Predicate>();
-        appendCriteria(valueBean,criteriaBuilder, criteriaCountQuery, dataSetType,root,andCriteriaList);
-        appendJoinCriteria(valueBean,criteriaBuilder, criteriaCountQuery, dataSetType,root,andCriteriaList);
 
-        if(!andCriteriaList.isEmpty()) {
-	        Predicate andPredicate = criteriaBuilder.and(andCriteriaList.toArray(new Predicate[0]));
-			criteriaCountQuery.where(andPredicate);
-		}
-		
-        int totalRecords =  entityManager.createQuery(criteriaCountQuery).getSingleResult().intValue();
-        
-        if(totalRecords == 0) {
-            Map map = new HashMap();
-            map.put(ApplicationConstant.ENTITY_LIST, Collections.EMPTY_LIST);
-            map.put(ApplicationConstant.TOTAL_NO_RECORDS, 0);
-            return map;
+        FilterValue[] filters = filterValueList.toArray(new FilterValue[0]);
+        Predicate[] predicates = preparePredicates(value,criteriaBuilder,root,filters);
+
+        if(predicates != null ) {
+            Predicate andPredicate = criteriaBuilder.and(predicates);
+            criteriaCountQuery.where(andPredicate);
         }
-        
+
+        Page<M> page = new Page<M>();
+        int totalRecords =  entityManager.createQuery(criteriaCountQuery).getSingleResult().intValue();
+        page.setTotal(totalRecords);
+        if(totalRecords == 0) {
+            page.setModelValueList(Collections.<M>emptyList());
+            return page;
+        }
+
         validateSortColumns(sortOrderList);
-        
+
+
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
-        
-        andCriteriaList = new ArrayList<Predicate>();
-        appendCriteria(valueBean,criteriaBuilder, criteriaQuery, dataSetType,mainRoot,andCriteriaList);
-        
-        Map<String,Join<? extends Model,? extends Model>> joinMap = appendJoinCriteria(valueBean,criteriaBuilder, criteriaQuery, dataSetType,mainRoot,andCriteriaList);
-        
+
+
         if(! sortOrderList.isEmpty()) {
-        	prepareOrderList(mainRoot,joinMap,sortOrderList);
-        	criteriaQuery.orderBy(sortOrderList.toArray(new Order[0]));
+            //TODO: handle the join map
+            prepareOrderList(mainRoot,null,sortOrderList);
+            criteriaQuery.orderBy(sortOrderList.toArray(new Order[0]));
         }
-        
-        if(! andCriteriaList.isEmpty()) {
-	        Predicate andPredicate = criteriaBuilder.and(andCriteriaList.toArray(new Predicate[0]));
-	        criteriaQuery.where(andPredicate);
+
+        predicates = preparePredicates(value,criteriaBuilder,mainRoot,filters);
+
+        if(predicates!=null  ){
+            Predicate andPredicate = criteriaBuilder.and(predicates);
+            criteriaQuery.where(andPredicate);
         }
-        
-        TypedQuery typedQuery = entityManager.createQuery(criteriaQuery);
+
+        TypedQuery<M> typedQuery = entityManager.createQuery(criteriaQuery);
         if ( pageSize <= 0 ) {
             pageSize=10;
         }
@@ -193,20 +207,39 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
             totalPage++;
         }
         if (Integer.MAX_VALUE == pageNumber){
-                pageNumber = totalPage;
+            pageNumber = totalPage;
         }else if (pageNumber>totalPage){
-                pageNumber = totalPage;
+            pageNumber = totalPage;
         }
-        
+
         typedQuery.setFirstResult((pageNumber -1) * pageSize);
         typedQuery.setMaxResults(pageSize);
-        
+
         List<M> entityList = typedQuery.getResultList();
-        Map map = new HashMap();
-        map.put(ApplicationConstant.ENTITY_LIST, entityList);
-        map.put(ApplicationConstant.TOTAL_NO_RECORDS, totalRecords);
-                
-        return map;
+        page.setModelValueList(entityList);
+
+        return page;
+    }
+
+    @Override
+    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasets, List<SortOrderValue> sortOrderList){
+
+        Page<M> page = lookupByCriteria(value,pageNumber,pageSize,filterValueList,sortOrderList);
+        Page<MB> pageValue = new Page<MB>();
+
+        List<M>  modelList = page.getModelValueList();
+        List<MB> valueList = new ArrayList<MB>(modelList.size());
+
+        pageValue.setTotal(page.getTotal());
+        pageValue.setModelValueList(valueList);
+
+        for(M m:modelList) {
+            //TODO: Should be implement dataset implementations
+            valueList.add((MB) m.getValue());
+        }
+
+        return  pageValue;
+
     }
 
     protected void validateSortColumns(List<SortOrderValue> sortOrderList) {
@@ -221,4 +254,41 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         
     }
 
+    private Predicate[] preparePredicates(Serializable serializable,CriteriaBuilder criteriaBuilder,Root<M> root,FilterValue... filters) {
+
+        List<Predicate> predicateList = new ArrayList<Predicate>(filters.length);
+
+        for(FilterValue filterValue:filters) {
+            //TODO: refactor the below step by Proper Attribute type
+            //TODO: NullPointer should be handle
+            String valuePath = filterValue.getField().getName();
+            Expression expression = root.get(valuePath);
+            Object value = getValue(serializable,valuePath);
+            FilterType filterType = filterValue.getFilterType();
+            Predicate predicate = filterType.prepareSimplePredicate(criteriaBuilder,expression,value);
+            predicateList.add(predicate);
+        }
+
+        return predicateList.toArray(new Predicate[0]);  //To change body of created methods use File | Settings | File Templates.
+    }
+
+
+
+
+    private Object getValue(Serializable serializable,String valuePath) {
+
+        Object value=null;
+        try {
+            value =  PropertyUtils.getSimpleProperty(serializable,valuePath);
+            return value;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return null;
+    }
 }

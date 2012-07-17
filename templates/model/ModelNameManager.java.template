@@ -13,10 +13,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value;
-import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value.${modelData.className}Dataset;
 import ${config.project.packageName}.model.AbstractModelManager;
 
-public class ${modelData.className}Manager  extends AbstractModelManager<${modelData.className},${modelData.className}Value,${modelData.className}Value.${modelData.className}Dataset>{
+public class ${modelData.className}Manager  extends AbstractModelManager<${modelData.className},${modelData.className}Value>{
 
 	private static ${modelData.className}Manager INSTANCE = null;
 
@@ -34,21 +33,7 @@ public class ${modelData.className}Manager  extends AbstractModelManager<${model
 	}
 	
 	@Override
-	protected void appendCriteria(${modelData.className}Value ${classRef}Value, CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery, ${modelData.className}Dataset dataset, Root<${modelData.className}> root,List<Predicate> andCriteriaList) {
-		switch (dataset) {
-		case BUSINESS_KEY:
-			Path<String> path = root.<String> get("${classRef}");
-			<% def pks = modelData.columns.findAll { column -> column.lpk  } 
-           pks.each { column ->%>
-			andCriteriaList.add(criteriaBuilder.equal(path, ${classRef}Value.<%=modelHelper.getter(column)%>()));
-			<%}%>
-			break;
-		}		
-		
-	}
-	
-	@Override
-	public ${modelData.className} createModel(${modelData.className}Value ${classRef}Value) {
+	protected ${modelData.className} initializeModel(${modelData.className}Value ${classRef}Value) {
 		
 		return new ${modelData.className}(${classRef}Value);
 	}

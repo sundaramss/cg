@@ -170,7 +170,8 @@ class ModelHelper {
 		'int':'java.lang.Integer',
 		'long':'java.lang.Long',
 		'double':'java.lang.Double',
-		'date': 'java.sql.Timestamp'
+		'date': 'java.sql.Timestamp',
+		'boolean': 'java.lang.Boolean'
 	]	
 	
 	

@@ -2,25 +2,29 @@ package ${config.project.packageName}.${config.project.model};
 
 import java.util.List;
 import java.util.Map;
+import java.io.Serializable;
+import ${config.project.packageName}.model.value.FilterValue;
 import ${config.project.packageName}.model.value.ModelValueBean;
+import ${config.project.packageName}.model.value.Page;
 import ${config.project.packageName}.model.value.SortOrderValue;
+
 /**
  *
  * @author ${config.project.author}
  */
-public interface ModelManager<M extends Model,MB extends ModelValueBean,E extends Enum> {
+public interface ModelManager<M extends Model,MB extends ModelValueBean> {
    
-    public M createModel(MB modelBean);
+    public MB createModel(MB modelBean);
+
+    public boolean delete(MB modelBean);
+    
     public M lookupBySurrogateKey(MB modelValue);
     public M lookupByBusinessKey(MB modelValue);
     
-    public List<M> lookupByCriteria(MB valueBean,E dataset);
+    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasets);
+    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasets, List<SortOrderValue> sortOrderList);
     
-    public Map lookupByCriteria(MB valueBean, int pageNumber, int pageSize, E dataSetType, List<SortOrderValue> sortOrderList);
-        
+    public List<MB> getAll(Enum... datasets);
     
-    public List<M> getAll();
-    public void save(M model);
-    public void delete(M model);
     
 }

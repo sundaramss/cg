@@ -6,7 +6,6 @@
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.criteria.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -15,6 +14,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import ${config.project.packageName}.model.value.AbstractModelValueBean;
 import ${config.project.packageName}.model.Model;
+import ${config.project.packageName}.model.value.FilterValue;
 import ${config.project.packageName}.${modelData.subsystem}.model.${modelData.className};
 
 @XmlRootElement(name = "${classRef}Value")
@@ -28,7 +28,8 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 	@XmlTransient
 	@JsonIgnore
 	@Override
-	public Predicate getBusinessKey(CriteriaBuilder criteriaBuilder, Root<? extends Model> root) {
+	public FilterValue[] getBusinessKeys() {
+		//TODO: frame the filter value
 		return null;
 	}
 
