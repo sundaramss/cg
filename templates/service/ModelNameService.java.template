@@ -1,12 +1,12 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
-%>package ${config.project.packageName}.${subsystem}.service;
+%>package ${config.project.packageName}.${subsystem.toLowerCase()}.service;
 
 import java.util.List;
 import java.util.Map;
 
-import ${config.project.packageName}.${subsystem}.model.${modelData.className};
-import ${config.project.packageName}.${subsystem}.model.value.${modelData.className}Value;
+import ${config.project.packageName}.${subsystem.toLowerCase()}.model.${modelData.className};
+import ${config.project.packageName}.${subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.model.value.SortOrderValue;
 import ${config.project.packageName}.model.value.FilterValue;

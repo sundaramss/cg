@@ -1,6 +1,6 @@
 {
 	"className":"EmployeeRole",
-	"subsystem":"masterdatamanagement",
+	"subsystem":"MasterdataManagement",
 	"tableName":"T_MD_EMP_ROLE",
 	"pk" : { "colName" : "er_sk_guid", "type" :"String" },
 	"columns" : [ {"name":"role", "colName":"er_role","type":"String","lpk":"true"} ,

@@ -1,4 +1,4 @@
-package ${config.project.packageName}.${subsystem}.service;
+package ${config.project.packageName}.${subsystem.toLowerCase()}.service;
 <% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] %>
 <% def modeService = modelData.collect { it.className+"Service" }%>
 /**

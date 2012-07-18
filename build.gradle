@@ -83,7 +83,7 @@ task cg(dependsOn: 'copy-base')  << {
 	pathMap.each { map ->
 			project.ext.modelData.each { modelData ->
 				  def rName = modelData.className+'$1'	
-				  def subsystemModelPackage = String.format(map.subsystemModelPackage,modelData.subsystem)
+				  def subsystemModelPackage = String.format(map.subsystemModelPackage,modelData.subsystem.toLowerCase())
 				  copy {
 					  from map.from
 					  into subsystemModelPackage
@@ -101,7 +101,7 @@ task cg(dependsOn: 'copy-base')  << {
 		def modelData = project.ext.modelData.findAll { it.subsystem == subsystem }
 		def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1]
 				
-		def subsystemModelPackage =  project.ext.baseDir.path + File.separator + subsystem + File.separator + 'service'
+		def subsystemModelPackage =  project.ext.baseDir.path + File.separator + subsystem.toLowerCase() + File.separator + 'service'
 		
 		copy {
 		  from "templates/service"

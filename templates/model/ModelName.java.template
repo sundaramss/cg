@@ -1,7 +1,7 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
 	
-%>package ${config.project.packageName}.${modelData.subsystem}.model;
+%>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
-import ${config.project.packageName}.${modelData.subsystem}.model.value.${modelData.className}Value;
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 /**
  * 
  * @author ${config.project.author}

@@ -11,7 +11,7 @@ project{
      persistenceUnitName="xyzUnit"
      jtaDatasource="java:/xyzDatasource"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"
-     subsystems=['masterdatamanagement','empmanagement']
+     subsystems=['MasterdataManagement','EmpManagement']
 }
 
 softwareStack{
