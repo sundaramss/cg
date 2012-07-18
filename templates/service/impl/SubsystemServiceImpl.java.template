@@ -1,16 +1,18 @@
-package ${config.project.packageName}.${subsystem}.service.impl;
+package ${config.project.packageName}.${subsystem.toLowerCase()}.service.impl;
 <% def subsystemName = subsystem[0].toUpperCase()+subsystem[1..-1] 
 	modelData.each{ mData ->
 %>
-import ${config.project.packageName}.${subsystem}.model.${mData.className};
-import ${config.project.packageName}.${subsystem}.model.${mData.className}Manager;
-import ${config.project.packageName}.${subsystem}.model.value.${mData.className}Value;
-import ${config.project.packageName}.${subsystem}.service.${subsystemName}Service;
+import ${config.project.packageName}.${subsystem.toLowerCase()}.model.${mData.className};
+import ${config.project.packageName}.${subsystem.toLowerCase()}.model.${mData.className}Manager;
+import ${config.project.packageName}.${subsystem.toLowerCase()}.model.value.${mData.className}Value;
+import ${config.project.packageName}.${subsystem.toLowerCase()}.service.${subsystemName}Service;
 <%}%>
 import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.model.value.FilterValue;
 import ${config.project.packageName}.model.value.SortOrderValue;
+import ${config.project.packageName}.model.value.Page;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -60,37 +62,37 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)	
-	public ${mData.className}Value get${mData.className}Value(${mData.className}Value ${classRef}Value) throws ApplicationException {
-		return null;
+	public ${mData.className}Value get${mData.className}Value(${mData.className}Value criteriaValue) throws ApplicationException {
+		
+			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
+			${mData.className} ${classRef} = ${classRef}Manager.lookupByBusinessKey(criteriaValue);
+
+			return ${classRef}.getValue();
 	}
 	
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public ${mData.className}Value get${mData.className}Value(FilterValue filterValue,${mData.className}Value.${mData.className}Dataset dataset) throws ApplicationException {
-		return null;
+	public ${mData.className}Value get${mData.className}Value(${mData.className}Value criteriaValue,${mData.className}Value.${mData.className}Dataset dataset) throws ApplicationException {
+
+			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
+			${mData.className} ${classRef} = ${classRef}Manager.lookupByBusinessKey(criteriaValue);
+		
+			${mData.className}Value ${classRef}Value = ${classRef}.getInitValue();
+			${classRef}.populateDatasets(${classRef}Value,dataset);
+			return ${classRef}Value;
+
 	}
+    
     
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public ${mData.className}Value get${mData.className}Value(List<FilterValue> filterValueList,List<${mData.className}Value.${mData.className}Dataset> datasets) throws ApplicationException{
-		return null;
-	}
-	
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public List<${mData.className}Value> get${mData.className}ValueList(FilterValue filterValue,${mData.className}Value.${mData.className}Dataset dataset) throws ApplicationException{
-		return null;
-	}
-    
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public List<${mData.className}Value> get${mData.className}ValueList(List<FilterValue> filterValueList,List<${mData.className}Value.${mData.className}Dataset> datasets) throws ApplicationException {
+	public List<${mData.className}Value> get${mData.className}ValueList(Serializable criteriaValue,List<FilterValue> filterValueList,List<${mData.className}Value.${mData.className}Dataset> datasets) throws ApplicationException {
 		return null;
 	}
 
 	@Override
 	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)	
-	public Map<String, Object> get${mData.className}Map(List<FilterValue> filterValueList,List<${mData.className}Value.${mData.className}Dataset> datasets, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList) {
+	public Page<${mData.className}Value> get${mData.className}Values(Serializable criteriaValue,List<FilterValue> filterValueList,List<${mData.className}Value.${mData.className}Dataset> datasets, int pageNumber, int pageSize, List<SortOrderValue> sortOrderList) {
 		return null;
 	}
 <%}%>		

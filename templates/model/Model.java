@@ -14,4 +14,8 @@ public interface Model<MB extends ModelValueBean> extends Serializable {
      public void updateValue(MB modelBean);
      
      public MB getValue();
+     
+     public MB getInitValue();
+
+     public MB populateDatasets(MB modelBean,Enum dataset);
 }

@@ -142,6 +142,24 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		return ${classRef}Value;
 	}
 
+
+     public ${modelData.className}Value getInitValue() {
+		${modelData.className}Value  ${classRef}Value = new ${modelData.className}Value();
+		${classRef}Value.setSkGuid(getSkGuid());
+		//TODO: Implement logical primary key value should populate
+		return  ${classRef}Value;
+     }
+
+     public ${modelData.className}Value populateDatasets(${modelData.className}Value ${classRef}Value,Enum dataset) {
+		if(${classRef}Value == null) {
+			${classRef}Value = getInitValue();
+		}
+		
+		//TODO: Implement few default datasets data
+		
+		return ${classRef}Value;
+     }
+
 	@Override
 	public boolean equals(Object thatObj) {
 
