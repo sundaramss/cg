@@ -77,6 +77,12 @@ task cg(dependsOn: 'copy-base')  << {
 							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'model/value',
 							renameSrc:"ModelName(.+)\\.template",
 							include:"**/ModelName*.template"
+						],
+						[
+							from:'templates/service',
+							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'service',
+							renameSrc:"ModelName(.+)\\.template",
+							include:"**/ModelNameService*.template"
 						]
 				  ];
 
@@ -112,22 +118,8 @@ task cg(dependsOn: 'copy-base')  << {
 			fileName.replaceAll("Subsystem(.+)\\.template",rName)
 		  }
 		  include "**/SubsystemService*.template"
-		}	
-		
-		modelData.each { mData ->
-			println mData.className
-			copy {
-			  from "templates/service"
-			  into subsystemModelPackage
-			  expand(project:project,config:config,modelData:mData,subsystem:subsystem)
-			  def rName = mData.className+'$1'
-			  rename { String fileName ->
-				fileName.replaceAll("ModelName(.+)\\.template",rName)
-			  }
-			   include "**/ModelNameService*.template"
-			}
 		}
-		
+			
 	}
 }
 
