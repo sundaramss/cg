@@ -65,7 +65,6 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
     
 
-    @Transactional(readOnly = true)
     public M lookupBySurrogateKey(MB modelValue) {
         
         if (modelValue == null || modelValue.getSkGuid() == null) {
@@ -79,26 +78,51 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         }
     }
 
+    public MB lookupValueBySurrogateKey(MB criteriaValue,Enum... datasets) {
+
+		M model =  lookupBySurrogateKey(criteriaValue);
+		
+		if(model == null )  return null;
+		
+		MB modelValue = (MB) model.getInitValue();
+		
+		populateValueByDataset(model,modelValue,datasets);
+		return modelValue;
+	}
+	   
     @Override
-    @Transactional(readOnly = true)
-    public M lookupByBusinessKey(MB modelValue) {
+    public M lookupByBusinessKey(MB criteriaValue) {
+        
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
-        FilterValue[] filters = modelValue.getBusinessKeys();
-        Predicate[] businessKeyPredicate = preparePredicates(modelValue,criteriaBuilder,mainRoot,filters);
+        FilterValue[] filters = criteriaValue.getBusinessKeys();
+        Predicate[] businessKeyPredicate = preparePredicates(criteriaValue,criteriaBuilder,mainRoot,filters);
+        
         try{
             Predicate andPredicate = criteriaBuilder.and(businessKeyPredicate);
             criteriaQuery.where(andPredicate);
             M model = entityManager.createQuery(criteriaQuery).getSingleResult();
             return model;
         }catch(NoResultException ignore) {
-
+			
         }
+        
         return null;
     }
 
+	public MB lookupValueByBusinessKey(MB criteriaValue,Enum... datasets) {
+	    
+	    M model = lookupByBusinessKey(criteriaValue);
+	    
+		if(model == null )  return null;
+		
+		MB modelValue = (MB) model.getInitValue();
+		populateValueByDataset(model,modelValue,datasets);
+		
+		return modelValue;
+	}
 
 
     public List<MB> getAll(Enum... datasets) {
@@ -110,16 +134,21 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         CriteriaQuery<M> select = criteriaQuery.select(from);
         TypedQuery<M> typedQuery = entityManager.createQuery(select);
         List<M> resultList = typedQuery.getResultList();
-        //TODO: iterate and apply the datasets
+        
         List<MB> resultValueList = new ArrayList<MB>(resultList.size());
+
         for(M m: resultList ) {
-            resultValueList.add((MB)m.getValue());
+			MB modelValue = (MB)m.getInitValue();
+            populateValueByDataset(m,modelValue,datasets);
+            resultValueList.add(modelValue);
         }
+        
         return resultValueList;
         
     }
 
     protected List<M> lookupByCriteria(Serializable value,List<FilterValue> filterValueList){
+		
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
@@ -138,14 +167,24 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
     
     @Override
-    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasets){
+    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasetList){
 
 
         List<M> resultList = lookupByCriteria(value,filterValueList);
-        //TODO: iterate and apply the datasets
+        
         List<MB> resultValueList = new ArrayList<MB>(resultList.size());
         for(M m: resultList ) {
-            resultValueList.add((MB)m.getValue());
+
+            Enum[] datasets = new Enum[0];
+
+            if(datasetList !=null ) {
+                datasets = datasetList.toArray(datasets);
+            }
+
+            MB modelValue = (MB)m.getInitValue();
+            populateValueByDataset(m,modelValue,datasets);
+            resultValueList.add(modelValue);
+            
         }
 
         return  resultValueList;
@@ -222,20 +261,27 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
 
     @Override
-    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasets, List<SortOrderValue> sortOrderList){
+    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasetList, List<SortOrderValue> sortOrderList){
 
         Page<M> page = lookupByCriteria(value,pageNumber,pageSize,filterValueList,sortOrderList);
         Page<MB> pageValue = new Page<MB>();
 
         List<M>  modelList = page.getModelValueList();
-        List<MB> valueList = new ArrayList<MB>(modelList.size());
+        List<MB> resultValueList = new ArrayList<MB>(modelList.size());
 
         pageValue.setTotal(page.getTotal());
-        pageValue.setModelValueList(valueList);
+        pageValue.setModelValueList(resultValueList);
 
         for(M m:modelList) {
-            //TODO: Should be implement dataset implementations
-            valueList.add((MB) m.getValue());
+            Enum[] datasets = new Enum[0];
+
+            if(datasetList !=null ) {
+                datasets = datasetList.toArray(datasets);
+            }
+
+            MB modelValue = (MB)m.getInitValue();
+            populateValueByDataset(m,modelValue,datasets);
+            resultValueList.add(modelValue);
         }
 
         return  pageValue;
@@ -291,4 +337,14 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 
         return null;
     }
+    
+    protected void populateValueByDataset(M model,MB valueBean,Enum... datasets) {
+		
+		if(model == null || valueBean == null) return;
+		
+		for(Enum dataset:datasets){
+			model.populateValue(valueBean,dataset);	
+		}		
+		
+	}
 }

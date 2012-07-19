@@ -21,7 +21,10 @@ public interface ModelManager<M extends Model,MB extends ModelValueBean> {
     public M lookupBySurrogateKey(MB modelValue);
     public M lookupByBusinessKey(MB modelValue);
     
-    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasets);
+	public MB lookupValueBySurrogateKey(MB modelValue,Enum... datasets);
+    public MB lookupValueByBusinessKey(MB modelValue,Enum... datasets);
+        
+    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasetList);
     public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasets, List<SortOrderValue> sortOrderList);
     
     public List<MB> getAll(Enum... datasets);

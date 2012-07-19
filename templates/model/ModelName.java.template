@@ -150,7 +150,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		return  ${classRef}Value;
      }
 
-     public ${modelData.className}Value populateDatasets(${modelData.className}Value ${classRef}Value,Enum dataset) {
+     public ${modelData.className}Value populateValue(${modelData.className}Value ${classRef}Value,Enum dataset) {
 		if(${classRef}Value == null) {
 			${classRef}Value = getInitValue();
 		}

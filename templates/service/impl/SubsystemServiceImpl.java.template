@@ -64,10 +64,9 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	@Transactional(readOnly = false, propagation = Propagation.SUPPORTS)	
 	public ${mData.className}Value get${mData.className}Value(${mData.className}Value criteriaValue) throws ApplicationException {
 		
-			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.lookupByBusinessKey(criteriaValue);
-
-			return ${classRef}.getValue();
+			${mData.className}Value ${classRef}Value = get${mData.className}Value(criteriaValue,${mData.className}Value.${mData.className}Dataset.ALL);
+			return ${classRef}Value;
+			
 	}
 	
 	@Override
@@ -75,10 +74,8 @@ public class ${subsystemName}ServiceImpl implements ${subsystemName}Service {
 	public ${mData.className}Value get${mData.className}Value(${mData.className}Value criteriaValue,${mData.className}Value.${mData.className}Dataset dataset) throws ApplicationException {
 
 			${mData.className}Manager ${classRef}Manager = ${mData.className}Manager.getInstance();
-			${mData.className} ${classRef} = ${classRef}Manager.lookupByBusinessKey(criteriaValue);
-		
-			${mData.className}Value ${classRef}Value = ${classRef}.getInitValue();
-			${classRef}.populateDatasets(${classRef}Value,dataset);
+			${mData.className}Value ${classRef}Value = ${classRef}Manager.lookupValueByBusinessKey(criteriaValue,dataset);
+
 			return ${classRef}Value;
 
 	}
