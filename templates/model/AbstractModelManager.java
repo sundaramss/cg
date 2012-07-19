@@ -167,19 +167,13 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
     
     @Override
-    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,List<Enum> datasetList){
+    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,Enum... datasets){
 
 
         List<M> resultList = lookupByCriteria(value,filterValueList);
         
         List<MB> resultValueList = new ArrayList<MB>(resultList.size());
         for(M m: resultList ) {
-
-            Enum[] datasets = new Enum[0];
-
-            if(datasetList !=null ) {
-                datasets = datasetList.toArray(datasets);
-            }
 
             MB modelValue = (MB)m.getInitValue();
             populateValueByDataset(m,modelValue,datasets);
@@ -261,7 +255,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
 
     @Override
-    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList,List<Enum> datasetList, List<SortOrderValue> sortOrderList){
+    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList, List<SortOrderValue> sortOrderList,Enum... datasets){
 
         Page<M> page = lookupByCriteria(value,pageNumber,pageSize,filterValueList,sortOrderList);
         Page<MB> pageValue = new Page<MB>();
@@ -273,12 +267,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         pageValue.setModelValueList(resultValueList);
 
         for(M m:modelList) {
-            Enum[] datasets = new Enum[0];
-
-            if(datasetList !=null ) {
-                datasets = datasetList.toArray(datasets);
-            }
-
+    
             MB modelValue = (MB)m.getInitValue();
             populateValueByDataset(m,modelValue,datasets);
             resultValueList.add(modelValue);

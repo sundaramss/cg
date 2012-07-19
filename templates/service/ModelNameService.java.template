@@ -24,10 +24,10 @@ public interface ${modelData.className}Service {
 		
 	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value criteriaValue) throws ApplicationException;
 	
-	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value criteriaValue,${modelData.className}Value.${modelData.className}Dataset dataset) throws ApplicationException;
+	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value criteriaValue,Enum... datasets) throws ApplicationException;
     
-	public List<${modelData.className}Value> get${modelData.className}ValueList(Serializable criteriaValue,List<FilterValue> filterValueList,List<${modelData.className}Value.${modelData.className}Dataset> datasets) throws ApplicationException;
+	public List<${modelData.className}Value> get${modelData.className}ValueList(Serializable criteriaValue,List<FilterValue> filterValueList,Enum... datasets) throws ApplicationException;
 
-	public Page<${modelData.className}Value> get${modelData.className}Values(Serializable criteriaValue,List<FilterValue> filterValueList,List<${modelData.className}Value.${modelData.className}Dataset> datasets,int pageNumber, int pageSize, List<SortOrderValue> sortOrderList);	
+	public Page<${modelData.className}Value> get${modelData.className}Values(Serializable criteriaValue,List<FilterValue> filterValueList,int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,Enum... datasets);	
 	
 }
