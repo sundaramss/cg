@@ -16,6 +16,7 @@ import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
+import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value.${modelData.className}Dataset.*;
 /**
  * 
  * @author ${config.project.author}
@@ -136,28 +137,53 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 		${modelData.className}Value ${classRef}Value = new ${modelData.className}Value();
 		${classRef}Value.setSkGuid(getSkGuid());
-        <% modelData.columns.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
-        <%}%>
-
+		populateAll(${classRef}Value);
+		
 		return ${classRef}Value;
 	}
 
 
-     public ${modelData.className}Value getInitValue() {
+     public ${modelData.className}Value getBusinessKeyValue() {
 		${modelData.className}Value  ${classRef}Value = new ${modelData.className}Value();
 		${classRef}Value.setSkGuid(getSkGuid());
-		//TODO: Implement logical primary key value should populate
+		populateBusinessKey(${classRef}Value);
 		return  ${classRef}Value;
      }
 
-     public ${modelData.className}Value populateValue(${modelData.className}Value ${classRef}Value,Enum dataset) {
-		if(${classRef}Value == null) {
-			${classRef}Value = getInitValue();
+	 @Override
+     public void populateValue(${modelData.className}Value ${classRef}Value,Enum dataset) {
+		
+		if(	${classRef}Value == null ) return;
+		
+		${classRef}Value.setSkGuid(getSkGuid());
+		
+		if(dataset == null ||  ${modelData.className}Value.${modelData.className}Dataset.class != dataset.getDeclaringClass()) return;
+		
+		${modelData.className}Value.${modelData.className}Dataset myDataset = (${modelData.className}Value.${modelData.className}Dataset)dataset;
+		
+		switch(myDataset) {
+			case ALL:
+				populateAll(${classRef}Value); 
+			break;	
+			case BUSINESS_KEY:
+			    populateBusinessKey(${classRef}Value);
+			break;
+			//User can define new dataset as per need
 		}
 		
-		//TODO: Implement few default datasets data
-		
-		return ${classRef}Value;
+     }
+     
+     private void populateAll(${modelData.className}Value ${classRef}Value) {
+         
+        <% modelData.columns.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}%>
+     }
+     
+     private void populateBusinessKey(${modelData.className}Value ${classRef}Value) {
+		<% def pkColumns = modelData.columns.findAll { column -> column.lpk  } 
+		pkColumns.each {  column -> %>
+		${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}%>
      }
 
 	@Override

@@ -84,7 +84,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 		
 		if(model == null )  return null;
 		
-		MB modelValue = (MB) model.getInitValue();
+		MB modelValue = (MB) model.getBusinessKeyValue();
 		
 		populateValueByDataset(model,modelValue,datasets);
 		return modelValue;
@@ -118,7 +118,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 	    
 		if(model == null )  return null;
 		
-		MB modelValue = (MB) model.getInitValue();
+		MB modelValue = (MB) model.getBusinessKeyValue();
 		populateValueByDataset(model,modelValue,datasets);
 		
 		return modelValue;
@@ -138,7 +138,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         List<MB> resultValueList = new ArrayList<MB>(resultList.size());
 
         for(M m: resultList ) {
-			MB modelValue = (MB)m.getInitValue();
+			MB modelValue = (MB)m.getBusinessKeyValue();
             populateValueByDataset(m,modelValue,datasets);
             resultValueList.add(modelValue);
         }
@@ -175,7 +175,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         List<MB> resultValueList = new ArrayList<MB>(resultList.size());
         for(M m: resultList ) {
 
-            MB modelValue = (MB)m.getInitValue();
+            MB modelValue = (MB)m.getBusinessKeyValue();
             populateValueByDataset(m,modelValue,datasets);
             resultValueList.add(modelValue);
             
@@ -268,7 +268,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 
         for(M m:modelList) {
     
-            MB modelValue = (MB)m.getInitValue();
+            MB modelValue = (MB)m.getBusinessKeyValue();
             populateValueByDataset(m,modelValue,datasets);
             resultValueList.add(modelValue);
         }

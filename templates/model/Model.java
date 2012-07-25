@@ -15,7 +15,7 @@ public interface Model<MB extends ModelValueBean> extends Serializable {
      
      public MB getValue();
      
-     public MB getInitValue();
+     public MB getBusinessKeyValue();
 
-     public MB populateValue(MB modelBean,Enum dataset);
+     public void populateValue(MB modelBean,Enum dataset);
 }
