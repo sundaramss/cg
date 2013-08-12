@@ -3,7 +3,9 @@ apply plugin: 'war'
 
 loadConfigFile();
 loadData();
-
+def getTemplateName() {
+	'templates2'
+}
 task "create-dirs" << {
     println "Create Java Base Layout"
 	
@@ -18,7 +20,8 @@ task "create-basepackage"(dependsOn: 'create-dirs') << {
 	
 	def config = project.ext.config
 	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
-    def packageFolder= config.project.packageName.replaceAll('\\.',File.separator) 
+	def packageFolder= config.project.packageName.replaceAll('\\.',"/") 
+	
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
@@ -36,7 +39,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		
 		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
 					  'model': project.ext.baseDir.path + File.separator + config.project.model,
-					  'modelvalue':project.ext.baseDir.path + File.separator + config.project.modelvalue.replaceAll('\\.',File.separator),
+					  'modelvalue':project.ext.baseDir.path + File.separator + config.project.modelvalue.replaceAll('\\.',"/"),
 					  'service':project.ext.baseDir.path + File.separator + config.project.service,
 					  'controller':project.ext.baseDir.path + File.separator + config.project.controller,
 					  'exception':project.ext.baseDir.path + File.separator + config.project.exception,
@@ -46,7 +49,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 					 
 		paths.each {  template_path, srcPath ->
 			copy {
-				 from "templates/${template_path}"
+				 from "${getTemplateName()}/${template_path}"
 				 into  srcPath
 				 expand(project:project,config:config,modelData:modelData)
 				 rename { String fileName ->
@@ -67,19 +70,19 @@ task cg(dependsOn: 'copy-base')  << {
 	
 	def pathMap = [ 
 						[
-							from:'templates/model',
+							from:"${getTemplateName()}/model",
 							subsystemModelPackage: project.ext.baseDir.path + File.separator + '%s' + File.separator + config.project.model,
 						    renameSrc:"ModelName(.+)\\.template",
 						    include:'**/ModelName*.template'
 						],
 						[
-							from:'templates/modelvalue',
+							from:"${getTemplateName()}/modelvalue",
 							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'model/value',
 							renameSrc:"ModelName(.+)\\.template",
 							include:"**/ModelName*.template"
 						],
 						[
-							from:'templates/service',
+							from:"${getTemplateName()}/service",
 							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'service',
 							renameSrc:"ModelName(.+)\\.template",
 							include:"**/ModelNameService*.template"
@@ -177,7 +180,21 @@ class ModelHelper {
 		sqljavatypes[type]
 	}
 	def getVariableType(column){
-		column.type.split('\\.')[-1]
+		def colType = column.type.split('\\.')[-1]
+		colType
+	}
+	def getVariableTypeForValueBean(column){
+		def colType = column.type.split('\\.')[-1]
+		if(sqljavatypes[colType.toLowerCase()] == null){
+			colType = colType + "Value"
+		}
+		colType
+	}
+	def getterForValueBean(column){
+		def typeName = getVariableTypeForValueBean(column)
+		def prefix = (typeName.toLowerCase() == 'boolean') ? 'is' : 'get'
+		def property = column.name[0].toUpperCase()+column.name[1..-1]
+		attachedValueRequired(column,"$prefix$property")
 	}
 	
 	def getter(column){
@@ -191,7 +208,19 @@ class ModelHelper {
 		def property = column.name[0].toUpperCase()+column.name[1..-1]
 		"set$property"
 	}
+
 	
+	def setterForValueBean(column){
+		def property = column.name[0].toUpperCase()+column.name[1..-1]
+		attachedValueRequired(column,"set$property");
+	}
+	def attachedValueRequired(column,value) {
+		def colType = column.type.split('\\.')[-1]
+		if(sqljavatypes[colType.toLowerCase()] == null){
+		   value += "Value"
+		}
+		value
+	}
 	def getTypeName(column) {
 		def type = column.type.split('\\.')[-1]
 		def typeName = type[0].toUpperCase()+type[1..-1]
@@ -199,6 +228,11 @@ class ModelHelper {
 	
 	def getVariableRef(column){
 		column.name[0].toLowerCase()+column.name[1..-1]
+	}
+
+	def getVariableRefForValueBean(column){
+		def value = column.name[0].toLowerCase()+column.name[1..-1]
+		attachedValueRequired(column,value)
 	}
 
 	def getequals(columns) {
