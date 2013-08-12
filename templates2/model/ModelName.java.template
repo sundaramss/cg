@@ -1,0 +1,224 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Type;
+
+import ${config.project.packageName}.model.AbstractModel;
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
+import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value.${modelData.className}ValueDataSet.*;
+/**
+ * 
+ * @author ${config.project.author}
+ * 
+ */
+@Entity
+@Table(name = "${modelData.tableName}")
+public class ${modelData.className} extends AbstractModel<${modelData.className}Value> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "${modelData.pk.colName}")
+	private ${modelData.pk.type} skGuid;
+	
+	<% modelData.columns.each {  column -> 
+		def jtype = modelHelper.getJavaType(column)
+		if( jtype ) {%>
+	@Column(name = "${column.colName}" )
+	@Type(type = "<%=jtype%>")<%}else{%>
+	@JoinColumn(name = "${column.colName}" )
+	@${column.joinType}(fetch = FetchType.LAZY)<%}%>
+	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
+	<%}%>
+	    
+	@Column(name = "CREATED_DT")
+	@Type(type = "java.sql.Timestamp")
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@Column(name = "MODIFIED_DT")
+	@Type(type = "java.sql.Timestamp")
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+
+	@Column(name = "CREATED_BY")
+	@Type(type = "java.lang.String")
+	private String createdBy;
+
+	@Column(name = "MODIFIED_BY")
+	@Type(type = "java.lang.String")
+	private String modifiedBy;
+
+
+	private ${modelData.className}() {
+
+	}
+
+	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
+		saveValue(${classRef}Value);
+		setCreatedBy(${classRef}Value.getCreatedBy());
+		setCreatedDate(new Date());
+	}
+	<% modelData.columns.each {  column -> %>
+	
+	protected  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
+		return this.<%=modelHelper.getVariableRef(column)%>;
+	}
+	
+	protected  void  <%=modelHelper.setter(column)%>(<%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>) {
+		this.<%=modelHelper.getVariableRef(column)%>=<%=modelHelper.getVariableRef(column)%>;
+	}	
+	<%}%>
+	protected ${modelData.pk.type} getSkGuid() {
+		return skGuid;
+	}
+
+	protected void setSkGuid(${modelData.pk.type} skGuid) {
+		this.skGuid = skGuid;
+	}
+	
+	
+
+	protected Date getCreatedDate() {
+		return createdDate;
+	}
+
+	protected void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	protected Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	protected void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	protected String getCreatedBy() {
+		return createdBy;
+	}
+
+	protected void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	protected String getModifiedBy() {
+		return modifiedBy;
+	}
+
+	protected void setModifiedBy(String modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
+	
+	@Override
+	public void setValue(${modelData.className}Value ${classRef}Value) {
+		<%modelData.columns.each {  column -> if(!column.isJoin){%>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Value.<%=modelHelper.getter(column)%>();
+		<%}}%>
+	}
+
+	@Override
+	public void updateValue(${modelData.className}Value ${classRef}Value) {
+	    saveValue(${classRef}Value);
+		setModifiedBy(${classRef}Value.getModifiedBy());
+		setModifiedDate(new Date());
+	}
+
+	@Override
+	public ${modelData.className}Value getValue() {
+
+		${modelData.className}Value ${classRef}Value = new ${modelData.className}Value();
+		${classRef}Value.setSkGuid(getSkGuid());
+		populateAll(${classRef}Value);
+		
+		return ${classRef}Value;
+	}
+
+
+     public ${modelData.className}Value getBusinessKeyValue() {
+		${modelData.className}Value  ${classRef}Value = new ${modelData.className}Value();
+		${classRef}Value.setSkGuid(getSkGuid());
+		populateBusinessKey(${classRef}Value);
+		return  ${classRef}Value;
+     }
+
+	 
+     public ${modelData.className}Value populateValue(${modelData.className}Value ${classRef}Value,Enum dataset) {
+		
+		if(	${classRef}Value == null ) {
+		     ${classRef}Value = new ${modelData.className}Value();
+		}
+		
+		${classRef}Value.setSkGuid(getSkGuid());
+		
+		if(dataset == null ||  ${modelData.className}Value.${modelData.className}ValueDataSet.class != dataset.getDeclaringClass()) return ${classRef}Value;
+		
+		${modelData.className}Value.${modelData.className}ValueDataSet myDataset = (${modelData.className}Value.${modelData.className}ValueDataSet)dataset;
+		
+		switch(myDataset) {
+			case ALL:
+				populateAll(${classRef}Value); 
+			break;	
+			case BUSINESS_KEY:
+			    populateBusinessKey(${classRef}Value);
+			break;
+			//User can define new dataset as per need
+		}
+		return ${classRef}Value;	
+     }
+     
+     private void populateAll(${modelData.className}Value ${classRef}Value) {
+         
+        <% modelData.columns.each {  column -> if(!column.isJoin){%> 	${classRef}Value.<%=modelHelper.setterForValueBean(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}}%>
+     }
+     
+     private void populateBusinessKey(${modelData.className}Value ${classRef}Value) {
+		<% def pkColumns = modelData.columns.findAll { column -> column.lpk  } 
+		pkColumns.each {  column -> %>
+		${classRef}Value.<%=modelHelper.setterForValueBean(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}%>
+     }
+
+	@Override
+	public boolean equals(Object thatObj) {
+
+		if (thatObj == null) {
+			return false;
+		}
+
+		if (getClass() != thatObj.getClass()) {
+			return false;
+		}
+
+		final ${modelData.className} that = (${modelData.className}) thatObj;
+		<% def pkforEquals = modelData.columns.findAll { column -> column.lpk  } %>
+		return (<%=modelHelper.getequals(pkforEquals).join(" && ")%>);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		<% def pks = modelData.columns.findAll { column -> column.lpk  } 
+           pks.each { column ->%>
+		hash = 31 * hash + <%=modelHelper.getHash(column)%>;
+        <%}%>
+		return hash;
+	}
+	
+}
