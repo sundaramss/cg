@@ -36,7 +36,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     
     protected abstract Class<M> getEntityType();
 
-    @PersistenceContext(unitName="${config.project.persistenceUnitName}")
+    @PersistenceContext(unitName="${config.project.name}Unit")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

@@ -1,0 +1,54 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			    http://www.springframework.org/schema/context
+			    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                            http://www.springframework.org/schema/jee 
+                            http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+                            http://www.springframework.org/schema/task
+                            http://www.springframework.org/schema/task/spring-task-3.0.xsd
+                            http://www.springframework.org/schema/mvc
+							http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+							http://www.springframework.org/schema/util 
+                			http://www.springframework.org/schema/util/spring-util.xsd
+                			http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+    <context:annotation-config />
+    <aop:aspectj-autoproxy/>
+	<context:component-scan base-package="${config.project.packageName}">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+
+    <mvc:annotation-driven />
+
+    <bean
+            class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="${config.project.name}Unit" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" p:entityManagerFactory-ref="entityManagerFactory" />
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+<% def managerList = project.ext.modelData.collect{ dt -> 
+		"${config.project.packageName}.${dt['subsystem'].toLowerCase()}.model.${dt['className']}Manager"
+   }
+   managerList.each{ mgr ->  
+%><bean id="${modelHelper.getVariableRef([name:mgr.split('\\.')[-1]])}" class="${mgr}" factory-method="getInstance" />
+<%}%>
+</beans>

@@ -4,7 +4,7 @@ apply plugin: 'war'
 loadConfigFile();
 loadData();
 def getTemplateName() {
-	'templates2'
+	'templates'
 }
 task "create-dirs" << {
     println "Create Java Base Layout"
@@ -34,6 +34,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		println "Copy template base sources"
 	
 		def config = project.ext.config	
+		def modelHelper = new ModelHelper()
 		def modelData = project.ext.modelData
 		def resources = sourceSets['main'].resources.srcDirs.iterator()[0]
 		
@@ -51,7 +52,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 			copy {
 				 from "${getTemplateName()}/${template_path}"
 				 into  srcPath
-				 expand(project:project,config:config,modelData:modelData)
+				 expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
 				 rename { String fileName ->
 					fileName.replace('appname', "$config.project.name")
 				 }
