@@ -8,11 +8,15 @@ project{
      controller='controller'
      constant='constant'
      exception='exception'
+     build='build'
      jtaDatasource="java:/xyzDatasource"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"
      subsystems=['MasterdataManagement','EmpManagement']
 }
 
 softwareStack{
-        spring_RESTful{	}
+	springVersion = "3.1.1.RELEASE"
+	sourceCompatibility = "1.6"
+	slf4jVersion="1.6.1"
 }
+

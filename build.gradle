@@ -8,25 +8,48 @@ def getTemplateName() {
 }
 task "create-dirs" << {
     println "Create Java Base Layout"
-	
-	webAppDir.mkdirs();
-	sourceSets*.java.srcDirs*.each { it.mkdirs() }    
-	sourceSets*.resources.srcDirs*.each{ it.mkdirs() }
-	
+
+    def app = project.ext.config.project.name
+    def currentDir = new java.io.File(System.getProperty("user.dir"));
+    java.io.File appDir = new java.io.File(currentDir.parent,app);
+	appDir.mkdirs();
+    def indexPath=currentDir.path.size()+1
+
+	def appWebDir = new java.io.File(appDir,webAppDir.path.substring(indexPath));
+	appWebDir.mkdirs();
+
+    project.ext.appDir=appDir;
+	project.ext.appWebDir=appWebDir;
+
+    def srcDirs=[]; 
+
+	sourceSets*.java.srcDirs*.each { 
+	   def srcDir=new java.io.File(appDir,it.path.substring(indexPath));
+	   srcDir.mkdir();
+	   srcDirs << srcDir
+	}    
+    project.ext.srcDirs=srcDirs;
+
+    def resourcesDirs=[];
+	sourceSets*.resources.srcDirs*.each{
+		resourcesDir = new java.io.File(appDir,it.path.substring(indexPath));
+		resourcesDir.mkdirs();
+		resourcesDirs << resourcesDir
+	}
+    project.ext.resourcesDirs = resourcesDirs;
+   
 }
 
 task "create-basepackage"(dependsOn: 'create-dirs') << {
 	println "Create app Base package"
 	
 	def config = project.ext.config
-	def mainJavaDir = sourceSets['main'].java.srcDirs.iterator()[0]
+	def mainJavaDir = project.ext.srcDirs[0] 
 	def packageFolder= config.project.packageName.replaceAll('\\.',"/") 
 	
 	def  baseDir =  new File(mainJavaDir,packageFolder)
 	baseDir.mkdirs()
 	project.ext.baseDir=baseDir
-	
-    
 	
 }
 
@@ -36,7 +59,7 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 		def config = project.ext.config	
 		def modelHelper = new ModelHelper()
 		def modelData = project.ext.modelData
-		def resources = sourceSets['main'].resources.srcDirs.iterator()[0]
+		def resources = project.ext.resourcesDirs[0]
 		
 		def paths = [ 'constant':project.ext.baseDir.path + File.separator + config.project.constant,
 					  'model': project.ext.baseDir.path + File.separator + config.project.model,
@@ -44,7 +67,8 @@ task  "copy-base" (dependsOn: 'create-basepackage') << {
 					  'service':project.ext.baseDir.path + File.separator + config.project.service,
 					  'controller':project.ext.baseDir.path + File.separator + config.project.controller,
 					  'exception':project.ext.baseDir.path + File.separator + config.project.exception,
-					  'webapps' : webAppDir.path,
+					  'build':project.ext.appDir.path,
+					  'webapps' : project.ext.appWebDir.path,
 					  'resources': resources.path
 					 ]
 					 
@@ -127,12 +151,6 @@ task cg(dependsOn: 'copy-base')  << {
 	}
 }
 
-task demo(dependsOn: 'cg')  << {
-	copy {
-		from 'src'
-		into '../demo/src'
-	}
-}
 
 def loadConfigFile() {
 	def softwareStack = hasProperty('env') ? env : 'spring_RESTful'
