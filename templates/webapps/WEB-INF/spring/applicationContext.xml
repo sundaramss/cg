@@ -45,6 +45,7 @@
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" p:entityManagerFactory-ref="entityManagerFactory" />
 
     <tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="serviceLocator" class="${config.project.packageName}.service.ServiceLocator" factory-method="getInstance" />
 <% def managerList = project.ext.modelData.collect{ dt -> 
 		"${config.project.packageName}.${dt['subsystem'].toLowerCase()}.model.${dt['className']}Manager"
    }

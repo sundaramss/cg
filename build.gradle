@@ -140,7 +140,7 @@ task cg(dependsOn: 'copy-base')  << {
 		copy {
 		  from "templates/service"
 		  into subsystemModelPackage
-		  expand(project:project,config:config,modelData:modelData,subsystem:subsystem)
+		  expand(project:project,config:config,modelData:modelData,subsystem:subsystem,modelHelper:modelHelper)
 		  def rName = subsystemName+'$1'
 		  rename { String fileName ->
 			fileName.replaceAll("Subsystem(.+)\\.template",rName)
