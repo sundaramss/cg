@@ -7,7 +7,7 @@ import ${config.project.packageName}.model.value.ModelValueBean;
  *
  * @author ${config.project.author}
  */
-public interface Model<MB extends ModelValueBean> extends Serializable {
+public interface Model<MB> extends Serializable {
 
      public void saveValue(MB modelBean);
      
