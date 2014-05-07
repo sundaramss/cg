@@ -12,7 +12,7 @@ import ${config.project.packageName}.model.value.SortOrderValue;
  *
  * @author ${config.project.author}
  */
-public interface ModelManager<M extends Model,MB extends ModelValueBean> {
+public interface ModelManager<M,MB> {
    
     public MB createModel(MB modelBean);
 
