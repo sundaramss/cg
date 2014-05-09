@@ -294,13 +294,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         List<Predicate> predicateList = new ArrayList<Predicate>(filters.length);
 
         for(FilterValue filterValue:filters) {
-            //TODO: refactor the below step by Proper Attribute type
-            //TODO: NullPointer should be handle
-            String valuePath = filterValue.getField().getName();
-            Expression expression = root.get(valuePath);
-            Object value = getValue(serializable,valuePath);
-            FilterType filterType = filterValue.getFilterType();
-            Predicate predicate = filterType.prepareSimplePredicate(criteriaBuilder,expression,value);
+            Predicate predicate = filterValue.preparePredicate(criteriaBuilder,root,serializable);
             predicateList.add(predicate);
         }
 
@@ -310,22 +304,6 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 
 
 
-    private Object getValue(Serializable serializable,String valuePath) {
-
-        Object value=null;
-        try {
-            value =  PropertyUtils.getSimpleProperty(serializable,valuePath);
-            return value;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return null;
-    }
     
     protected void populateValueByDataset(M model,MB valueBean,Enum... datasets) {
 		

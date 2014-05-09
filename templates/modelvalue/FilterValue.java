@@ -7,17 +7,17 @@ import javax.persistence.metamodel.Attribute;
  *
  * @author ${config.project.author}
  */
-public class FilterValue implements Serializable{
+public class FilterValue<T> implements Serializable{
 
-    private FilterType filterType;
+    private Filter filter;
     private Attribute field;
     
-    public FilterType getFilterType() {
-		return filterType;
+    public Filter getFilter() {
+		return filter;
 	}
 	
-	public void setFilterType(FilterType filterType) {
-		this.filterType = filterType;
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 	}
     
     
@@ -28,5 +28,23 @@ public class FilterValue implements Serializable{
 	public void setField(Attribute field) {
 		 this.field = field;
 	}    
-	
+
+
+    private Expression<T> getValueExpression(CriteriaBuilder criteriaBuilder,Serializable bean) {
+       DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(bean);
+       T value = (T) fieldAccessor.getPropertyType(field.getName());
+       return criteriaBuilder.literal(value);
+    }
+
+    private Expression<T> getFieldExpression(Root<?> root){
+        String fieldPath = field.getName();
+       return root.get(fieldPath);
+    }
+
+    public Predicate preparePredicate(CriteriaBuilder criteriaBuilder,Root<?> root,Serializable serializable) {
+        Expression<T> fieldExpression = getFieldExpression(root);
+        Expression<T> valueExpression = getValueExpression(criteriaBuilder,serializable);
+        return filter.preparePredicate(criteriaBuilder,fieldExpression,valueExpression);
+    }
 }
+

@@ -11,12 +11,12 @@ import javax.persistence.criteria.Predicate;
 public enum FilterType implements Filter{
 
 	EQUAL() {
-		public <T> Predicate prepareSimplePredicate(CriteriaBuilder criteriaBuilder,Expression fieldExpression,T value){
-				Expression<T> valueExpression = criteriaBuilder.literal(value);
+		public <T> Predicate preparePredicate(CriteriaBuilder criteriaBuilder,Expression<T> fieldExpression,Expression<T> valueExpression){
 				return  criteriaBuilder.equal(fieldExpression,valueExpression);
 		}	
 	};
 
-	public abstract <T> Predicate prepareSimplePredicate(CriteriaBuilder criteriaBuilder,Expression fieldExpression,T value);
+	public abstract <T> Predicate preparePredicate(CriteriaBuilder criteriaBuilder, Expression<T> fieldExpression,Expression<T> valueExpression);
     
 }
+
