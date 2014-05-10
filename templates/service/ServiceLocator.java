@@ -2,9 +2,6 @@ package ${config.project.packageName}.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<% config.project.subsystems.each { subsystem -> 
-	def subsystemName = subsystem[0].toUpperCase() + subsystem[1..-1]%>
-import ${config.project.packageName}.${subsystem.toLowerCase()}.service.${subsystemName}Service;<%}%>
 <% modelData.each { mData -> %>
 import ${config.project.packageName}.${mData.subsystem.toLowerCase()}.service.${mData.className}Service;<%}%>
 /**
@@ -25,23 +22,21 @@ public class ServiceLocator {
 		return instance;
 	}
 
-<% config.project.subsystems.each { subsystem -> 
-	def subsystemName = subsystem[0].toUpperCase() + subsystem[1..-1]
-	def subsystemNameRef = modelHelper.getVariableRef([name:subsystem])%>
-	private ${subsystemName}Service  ${subsystemNameRef}Service;<%}%>
-<% config.project.subsystems.each { subsystem -> 
-	def subsystemName = subsystem[0].toUpperCase() + subsystem[1..-1]
-	def subsystemNameRef = modelHelper.getVariableRef([name:subsystem])%>
+
+	<% modelData.each { mData -> 
+	def modelNameRef = modelHelper.getVariableRef([name:mData.className])%>
+
+	private ${mData.className}Service  ${modelNameRef}Service;
+
+	public ${mData.className}Service  get${mData.className}Service() { 
+			return ${modelNameRef}Service;
+	}
+
 	@Autowired
-	public void set${subsystemName}Service(${subsystemName}Service  ${subsystemNameRef}Service){
-			this.${subsystemNameRef}Service = ${subsystemNameRef}Service;
+	public void set${mData.className}Service(${mData.className}Service ${modelNameRef}Service) { 
+			this.${modelNameRef}Service=${modelNameRef}Service;
 	}
 	<%}%>
 
-	<% modelData.each { mData -> 
-	def subsystemNameRef = modelHelper.getVariableRef([name:mData.subsystem])%>
-	public ${mData.className}Service  get${mData.className}Service() { 
-			return ${subsystemNameRef}Service;
-	}<%}%>
 
 }

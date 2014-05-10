@@ -43,12 +43,12 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 
 
     @Override
-    public MB createModel(MB modelBean) {
+    public M createModel(MB modelBean) {
 
         M model = initializeModel(modelBean);
         entityManager.persist(model);
 
-        return (MB) model.getValue();
+        return model; 
     }
 
     protected abstract  M initializeModel(MB modelBean);
@@ -65,6 +65,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
     }
     
 
+    @Override
     public M lookupBySurrogateKey(MB modelValue) {
         
         if (modelValue == null || modelValue.getSkGuid() == null) {
@@ -73,22 +74,10 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
             String skGUID = modelValue.getSkGuid();
             Class<M> type = getEntityType();
             M m = entityManager.find(type, skGUID);
-            Assert.notNull(m,"Invalid SkGUID");
             return m;
         }
     }
 
-    public MB lookupValueBySurrogateKey(MB criteriaValue,Enum... datasets) {
-
-		M model =  lookupBySurrogateKey(criteriaValue);
-		
-		if(model == null )  return null;
-		
-		MB modelValue = (MB) model.getBusinessKeyValue();
-		
-		populateValueByDataset(model,modelValue,datasets);
-		return modelValue;
-	}
 	   
     @Override
     public M lookupByBusinessKey(MB criteriaValue) {
@@ -112,20 +101,9 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         return null;
     }
 
-	public MB lookupValueByBusinessKey(MB criteriaValue,Enum... datasets) {
-	    
-	    M model = lookupByBusinessKey(criteriaValue);
-	    
-		if(model == null )  return null;
-		
-		MB modelValue = (MB) model.getBusinessKeyValue();
-		populateValueByDataset(model,modelValue,datasets);
-		
-		return modelValue;
-	}
 
-
-    public List<MB> getAll(Enum... datasets) {
+    @Override
+    public List<M> getAll() {
         
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -135,15 +113,7 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         TypedQuery<M> typedQuery = entityManager.createQuery(select);
         List<M> resultList = typedQuery.getResultList();
         
-        List<MB> resultValueList = new ArrayList<MB>(resultList.size());
-
-        for(M m: resultList ) {
-			MB modelValue = (MB)m.getBusinessKeyValue();
-            populateValueByDataset(m,modelValue,datasets);
-            resultValueList.add(modelValue);
-        }
-        
-        return resultValueList;
+        return resultList;
         
     }
 
@@ -166,23 +136,6 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         return  resultList;
     }
     
-    @Override
-    public List<MB> lookupByCriteria(Serializable value,List<FilterValue> filterValueList,Enum... datasets){
-
-
-        List<M> resultList = lookupByCriteria(value,filterValueList);
-        
-        List<MB> resultValueList = new ArrayList<MB>(resultList.size());
-        for(M m: resultList ) {
-
-            MB modelValue = (MB)m.getBusinessKeyValue();
-            populateValueByDataset(m,modelValue,datasets);
-            resultValueList.add(modelValue);
-            
-        }
-
-        return  resultValueList;
-    }
 
     protected Page<M> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList, List<SortOrderValue> sortOrderList) {
 
@@ -252,29 +205,6 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         page.setModelValueList(entityList);
 
         return page;
-    }
-
-    @Override
-    public Page<MB> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList, List<SortOrderValue> sortOrderList,Enum... datasets){
-
-        Page<M> page = lookupByCriteria(value,pageNumber,pageSize,filterValueList,sortOrderList);
-        Page<MB> pageValue = new Page<MB>();
-
-        List<M>  modelList = page.getModelValueList();
-        List<MB> resultValueList = new ArrayList<MB>(modelList.size());
-
-        pageValue.setTotal(page.getTotal());
-        pageValue.setModelValueList(resultValueList);
-
-        for(M m:modelList) {
-    
-            MB modelValue = (MB)m.getBusinessKeyValue();
-            populateValueByDataset(m,modelValue,datasets);
-            resultValueList.add(modelValue);
-        }
-
-        return  pageValue;
-
     }
 
     protected void validateSortColumns(List<SortOrderValue> sortOrderList) {

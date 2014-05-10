@@ -1,0 +1,29 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+	
+%>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.service.impl;
+
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.${modelData.className};
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.${modelData.className}Manager;
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
+import ${config.project.packageName}.model.ModelManager;
+import ${config.project.packageName}.service.impl.AppServiceImpl;
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.service.${modelData.className}Service; 
+
+public class ${modelData.className}ServiceImpl extends AppServiceImpl<${modelData.className},${modelData.className}Value> implements ${modelData.className}Service{
+
+    protected ModelManager<${modelData.className},${modelData.className}Value> getModelManager() {
+		return ${modelData.className}Manager.getInstance();
+ 
+	}
+
+}

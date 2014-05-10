@@ -9,25 +9,10 @@ import java.util.Map;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.${modelData.className};
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.exception.ApplicationException;
-import ${config.project.packageName}.model.value.SortOrderValue;
-import ${config.project.packageName}.model.value.FilterValue;
-import ${config.project.packageName}.model.value.Page;
+import ${config.project.packageName}.service.AppService;
 
-public interface ${modelData.className}Service {
+public interface ${modelData.className}Service extends AppService<${modelData.className},${modelData.className}Value> {
 
 	
-	public ${modelData.className}Value create(${modelData.className}Value ${classRef}Value) throws ApplicationException;
-	
-	public ${modelData.className}Value update(${modelData.className}Value ${classRef}Value) throws ApplicationException;
-	
-	public void delete(${modelData.className}Value ${classRef}Value) throws ApplicationException;
-		
-	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value criteriaValue) throws ApplicationException;
-	
-	public ${modelData.className}Value get${modelData.className}Value(${modelData.className}Value criteriaValue,Enum... datasets) throws ApplicationException;
-    
-	public List<${modelData.className}Value> get${modelData.className}ValueList(Serializable criteriaValue,List<FilterValue> filterValueList,Enum... datasets) throws ApplicationException;
-
-	public Page<${modelData.className}Value> get${modelData.className}Values(Serializable criteriaValue,List<FilterValue> filterValueList,int pageNumber, int pageSize, List<SortOrderValue> sortOrderList,Enum... datasets);	
 	
 }

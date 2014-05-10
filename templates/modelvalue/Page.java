@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author ${config.project.author}
  */
-public class Page<T extends ModelValueBean> implements Serializable{
+public class Page<T> implements Serializable{
 
 	private List<T> modelValueList;
 	
