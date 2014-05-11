@@ -7,6 +7,7 @@ import ${config.project.packageName}.model.value.ModelValueBean;
 import ${config.project.packageName}.service.AppService;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author  ${config.project.author}
  */
-public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> implements AppService<M,MB> {
+public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> implements AppService<MB> {
 
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = { ApplicationException.class })
@@ -53,7 +54,13 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, rollbackFor = { ApplicationException.class })
     public List<MB> getAll() {
         ModelManager<M,MB> modelManager = getModelManager();
-        return null;
+        List<M> modelList = modelManager.getAll();
+        List<MB> modelValueBeans = new ArrayList<>();
+        for(M model:modelList) {
+            MB modelValueBean = (MB) model.getValue();
+            modelValueBeans.add(modelValueBean);
+        }
+        return modelValueBeans;    
     }
 
     protected abstract ModelManager<M,MB> getModelManager();

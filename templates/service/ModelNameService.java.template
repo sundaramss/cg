@@ -11,7 +11,7 @@ import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.
 import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.service.AppService;
 
-public interface ${modelData.className}Service extends AppService<${modelData.className},${modelData.className}Value> {
+public interface ${modelData.className}Service extends AppService<${modelData.className}Value> {
 
 	
 	

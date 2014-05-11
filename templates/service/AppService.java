@@ -2,7 +2,7 @@ package ${config.project.packageName}.service;
 
 import java.util.List;
 
-public interface AppService<M,MB>{
+public interface AppService<MB>{
 
 	MB create(MB modelValueBean);
 
