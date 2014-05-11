@@ -23,33 +23,5 @@
                 			http://www.springframework.org/schema/util/spring-util.xsd
                 			http://www.springframework.org/schema/aop
                             http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-    <context:annotation-config />
-    <aop:aspectj-autoproxy/>
-	<context:component-scan base-package="${config.project.packageName}">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
-	</context:component-scan>
-
-
-    <mvc:annotation-driven />
-
-    <bean
-            class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-
-    <bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
-
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="${config.project.name}Unit" />
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" p:entityManagerFactory-ref="entityManagerFactory" />
-
-    <tx:annotation-driven transaction-manager="transactionManager" />
-	<bean id="serviceLocator" class="${config.project.packageName}.service.ServiceLocator" factory-method="getInstance" />
-<% def managerList = project.ext.modelData.collect{ dt -> 
-		"${config.project.packageName}.${dt['subsystem'].toLowerCase()}.model.${dt['className']}Manager"
-   }
-   managerList.each{ mgr ->  
-%><bean id="${modelHelper.getVariableRef([name:mgr.split('\\.')[-1]])}" class="${mgr}" factory-method="getInstance" />
-<%}%>
+<import resource="classpath*:/META-INF/spring/*.xml"/>
 </beans>
