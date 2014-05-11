@@ -12,14 +12,18 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
+import ${config.project.packageName}.controller.AbstractAppController; 
 import ${config.project.packageName}.service.ServiceLocator; 
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.service.${modelData.className}Service; 
 
+@RequestMapping("/${modelData.className.toLowerCase()}")
 public class ${modelData.className}Controller extends AbstractAppController<${modelData.className}Value> {
 
-    protected ${modelData.className}Service<${modelData.className}Value> getAppService() {
-		return ServiceLocator.get${modelData.className}Service();
+    protected ${modelData.className}Service getAppService() {
+		return ServiceLocator.getInstance().get${modelData.className}Service();
  
 	}
 
