@@ -5,7 +5,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <non-jta-data-source>${config.project.jtaDatasource}</non-jta-data-source>
     <% modelData.each{ mData -> %> 
-		<class>${config.project.packageName}.${mData.subsystem}.model.${mData.className}</class>
+		<class>${config.project.packageName}.${mData.subsystem.toLowerCase()}.model.${mData.className}</class>
     <%}%>
     <properties>
          <property name="hibernate.dialect" value="${config.project.hibernateDialect}"/>
