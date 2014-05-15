@@ -58,6 +58,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
     }
 
     @Override
+    @RequestMapping(method = RequestMethod.GET,value = "/")
     public ResponseEntity<List<MB>> getAll() {
         AppService<MB> appService = getAppService();
         List<MB> modelValueList = appService.getAll();
