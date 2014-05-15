@@ -19,6 +19,9 @@ import ${config.project.packageName}.model.ModelManager;
 import ${config.project.packageName}.service.impl.AppServiceImpl;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.service.${modelData.className}Service; 
 
+import org.springframework.stereotype.Service;
+
+@Service("${classRef}Service")
 public class ${modelData.className}ServiceImpl extends AppServiceImpl<${modelData.className},${modelData.className}Value> implements ${modelData.className}Service{
 
     protected ModelManager<${modelData.className},${modelData.className}Value> getModelManager() {
