@@ -9,7 +9,7 @@ project{
      constant='constant'
      exception='exception'
      build='build'
-     jtaDatasource="java:/xyzDatasource"
+     jtaDatasource="java:/comp/env/jdbc/empapp"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"
      subsystems=['MasterdataManagement','EmpManagement']
 }
