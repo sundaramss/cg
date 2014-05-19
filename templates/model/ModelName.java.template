@@ -4,6 +4,7 @@
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +28,7 @@ import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}
 public class ${modelData.className} extends AbstractModel<${modelData.className}Value> {
 
 	@Id
-	@GeneratedValue
+	//@GeneratedValue
 	@Column(name = "${modelData.pk.colName}")
 	private ${modelData.pk.type} skGuid;
 	
@@ -61,6 +62,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	}
 
 	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
+	        setSkGuid(UUID.randomUUID().toString());
 		saveValue(${classRef}Value);
 		setCreatedBy(${classRef}Value.getCreatedBy());
 		setCreatedDate(new Date());
