@@ -2,6 +2,7 @@
 	"className":"Employee",
 	"subsystem":"EmpManagement",
 	"tableName":"T_EMP_EMPLOYEE",
+	"recordLog":"true",
 	"pk" : { "colName" : "emp_sk_guid", "type" :"String" },
 	"columns" : [ {"name":"id", "colName":"emp_id","type":"String","lpk":"true"} ,
 				  {"name":"firstName","colName":"emp_first_name","type":"String"}, 

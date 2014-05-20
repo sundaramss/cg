@@ -37,7 +37,8 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	@Type(type = "<%=modelHelper.getJavaType(column)%>")
 	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
 	<%}%>
-	    
+
+	<%if(modelData.recordLog){%>
 	@Column(name = "created_date")
 	@Type(type = "java.sql.Timestamp")
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -55,17 +56,18 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	@Column(name = "modified_by")
 	@Type(type = "java.lang.String")
 	private String modifiedBy;
-
+	<%}%>
 
 	private ${modelData.className}() {
 
 	}
 
 	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
-	        setSkGuid(UUID.randomUUID().toString());
-		saveValue(${classRef}Value);
+		setSkGuid(UUID.randomUUID().toString());
+		saveValue(${classRef}Value);<%if(modelData.recordLog){%>
 		setCreatedBy(${classRef}Value.getCreatedBy());
-		setCreatedDate(new Date());
+		setCreatedDate(new Date());<%}%>
+
 	}
 	<% modelData.columns.each {  column -> %>
 	
@@ -84,9 +86,8 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	protected void setSkGuid(${modelData.pk.type} skGuid) {
 		this.skGuid = skGuid;
 	}
-	
-	
 
+	<%if(modelData.recordLog){%>
 	protected Date getCreatedDate() {
 		return createdDate;
 	}
@@ -118,7 +119,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	protected void setModifiedBy(String modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
-
+	<%}%>
 	
 
 	@Override
@@ -129,9 +130,9 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 	@Override
 	public void updateValue(${modelData.className}Value ${classRef}Value) {
-	    saveValue(${classRef}Value);
+	    saveValue(${classRef}Value);<%if(modelData.recordLog){%>
 		setModifiedBy(${classRef}Value.getModifiedBy());
-		setModifiedDate(new Date());
+		setModifiedDate(new Date());<%}%>
 	}
 
 	@Override
