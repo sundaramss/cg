@@ -1,0 +1,15 @@
+<%
+	fields=[]
+	if(modelData.pk) {
+		size=(modelData.pk.colSize)?"($modelData.pk.colSize)":""
+		fields << "$modelData.pk.colName $modelData.pk.colType$size PRIMARY KEY"
+	}
+	modelData.columns.each{ column ->
+		size = (column.colSize) ? "($column.colSize)" : ""
+		fields << "$column.colName $column.colType$size"
+	}
+%>
+
+DROP TABLE ${modelData.tableName};
+
+CREATE TABLE ${modelData.tableName}(${fields.join(',')});

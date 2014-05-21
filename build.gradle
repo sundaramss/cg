@@ -117,6 +117,12 @@ task cg(dependsOn: 'copy-base')  << {
 							subsystemModelPackage:project.ext.baseDir.path + File.separator + '%s' + File.separator + 'controller',
 							renameSrc:"ModelName(.+)\\.template",
 							include:"**/ModelNameController*.template"
+						],
+						[
+							from:"${getTemplateName()}/scripts/sql",
+							subsystemModelPackage:project.appDir.path + File.separator + 'scripts' + File.separator + 'sql',
+							renameSrc:"ModelName(.+)\\.template",
+							include:"**/ModelName.sql.template"
 						]
 				  ];
 

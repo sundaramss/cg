@@ -8,6 +8,7 @@ project{
      controller='controller'
      constant='constant'
      exception='exception'
+	 scripts='scripts'
      build='build'
      jtaDatasource="java:/comp/env/jdbc/empapp"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"

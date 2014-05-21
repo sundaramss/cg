@@ -2,8 +2,8 @@
 	"className":"EmployeeRole",
 	"subsystem":"MasterdataManagement",
 	"tableName":"T_MD_EMP_ROLE",
-	"pk" : { "colName" : "er_sk_guid", "type" :"String" },
-	"columns" : [ {"name":"role", "colName":"er_role","type":"String","lpk":"true"} ,
-				  {"name":"description","colName":"er_desc","type":"String"}
+	"pk" : { "colName" : "er_sk_guid", "type" :"String","colType":"varchar","colSize":"50" },
+	"columns" : [ {"name":"role", "colName":"er_role","type":"String","lpk":"true","colType":"varchar","colSize":"50"} ,
+				  {"name":"description","colName":"er_desc","type":"String","colType":"varchar","colSize":"100"}
 	            ]
 }

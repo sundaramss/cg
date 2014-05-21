@@ -3,11 +3,11 @@
 	"subsystem":"EmpManagement",
 	"tableName":"T_EMP_EMPLOYEE",
 	"recordLog":"true",
-	"pk" : { "colName" : "emp_sk_guid", "type" :"String" },
-	"columns" : [ {"name":"id", "colName":"emp_id","type":"String","lpk":"true"} ,
-				  {"name":"firstName","colName":"emp_first_name","type":"String"}, 
-				  {"name":"lastName","colName":"emp_last_name","type":"String"}, 
-				  {"name":"doj","colName":"emp_doj","type":"java.util.Date"},
-				  {"name":"salary","colName":"emp_salary","type":"double"}
+	"pk" : { "colName" : "emp_sk_guid", "type" :"String","colType":"varchar","colSize":"50" },
+	"columns" : [ {"name":"id", "colName":"emp_id","type":"String","lpk":"true","colType":"varchar","colSize":"10"} ,
+				  {"name":"firstName","colName":"emp_first_name","type":"String","colType":"varchar","colSize":"50"}, 
+				  {"name":"lastName","colName":"emp_last_name","type":"String","colType":"varchar","colSize":"50"}, 
+				  {"name":"doj","colName":"emp_doj","type":"java.util.Date","colType":"timestamp"},
+				  {"name":"salary","colName":"emp_salary","type":"double","colType":"numeric","colSize":"13,2"}
 	            ]
 }
