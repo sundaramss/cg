@@ -1,15 +1,20 @@
 <%
-	fields=[]
+	def fields=[]
 	if(modelData.pk) {
 		size=(modelData.pk.colSize)?"($modelData.pk.colSize)":""
 		fields << "$modelData.pk.colName $modelData.pk.colType$size PRIMARY KEY"
 	}
+	def ukcols=[]
 	modelData.columns.each{ column ->
 		size = (column.colSize) ? "($column.colSize)" : ""
 		fields << "$column.colName $column.colType$size"
+		if(column.lpk){
+			ukcols << column.colName
+		}
 	}
 %>
 
 DROP TABLE ${modelData.tableName};
 
 CREATE TABLE ${modelData.tableName}(${fields.join(',')});
+ALTER TABLE ${modelData.tableName} ADD CONSTRAINT UK_${modelData.tableName} UNIQUE (${ukcols.join(',')})
