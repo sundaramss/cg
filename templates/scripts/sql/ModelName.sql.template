@@ -12,9 +12,16 @@
 			ukcols << column.colName
 		}
 	}
+	if(modelData.recordLog) {
+		fields << "created_by varchar(50)"
+		fields << "modified_by varchar(50)"
+		fields << "created_date timestamp"
+		fields << "modified_date timestamp"
+	}
 %>
 
 DROP TABLE ${modelData.tableName};
 
 CREATE TABLE ${modelData.tableName}(${fields.join(',')});
-ALTER TABLE ${modelData.tableName} ADD CONSTRAINT UK_${modelData.tableName} UNIQUE (${ukcols.join(',')})
+
+ALTER TABLE ${modelData.tableName} ADD CONSTRAINT UK_${modelData.tableName} UNIQUE (${ukcols.join(',')});

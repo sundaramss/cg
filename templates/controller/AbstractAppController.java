@@ -11,12 +11,9 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.*;
 
 import ${config.project.packageName}.service.ServiceLocator;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
@@ -41,18 +38,19 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.PUT,value = "/{id}")
-    public ResponseEntity<MB> update(@RequestBody MB modelValue) {
-        //TODO
+    @RequestMapping(method = RequestMethod.PUT,value = "/{skGuid}")
+    public ResponseEntity<MB> update(@RequestBody MB modelValue,@PathVariable String skGuid) {
         AppService<MB> appService = getAppService();
+	modelValue.setSkGuid(skGuid);
         MB modifiedValue = appService.update(modelValue);
         return new ResponseEntity<>(modifiedValue, HttpStatus.OK);
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.DELETE,value = "/{id}")
-    public ResponseEntity<MB> delete(@RequestBody MB modelValue) {
+    @RequestMapping(method = RequestMethod.DELETE,value = "/{skGuid}")
+    public ResponseEntity<MB> delete(MB modelValue,@PathVariable String skGuid) {
         AppService<MB> appService = getAppService();
+	modelValue.setSkGuid(skGuid);
         MB deleteValue = appService.delete(modelValue);
         return new ResponseEntity<MB>(deleteValue, HttpStatus.OK);
     }

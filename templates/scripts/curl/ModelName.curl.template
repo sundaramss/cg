@@ -1,0 +1,19 @@
+<%
+	def fields=[:]
+	modelData.columns.each{ column ->
+		fields.put(modelHelper.getVariableRef(column),""); 
+	}
+	def url = "http://localhost:7070/${config.project.name}/rest/${modelData.className.toLowerCase()}/";
+	def jsonData=modelHelper.prepareJson(fields).replace("\"","\\\"")
+%>
+
+curl -i -k -X GET "$url" 
+
+curl -i -k -X POST "$url" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
+
+curl -i -k -X PUT "${url}<skguid>" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
+
+curl -i -k -X DELETE "${url}<skguid>" -H "Accept: application/json"  
+
+
+

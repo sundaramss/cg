@@ -15,7 +15,6 @@
 							http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
                     ">
     <context:annotation-config />
-    <aop:aspectj-autoproxy/>
 	<context:component-scan base-package="${config.project.packageName}">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>

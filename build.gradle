@@ -91,6 +91,7 @@ task cg(dependsOn: 'copy-base')  << {
 	
 	println "Code Generate" 
 	
+	def config = project.ext.config	
 	def modelHelper = new ModelHelper()
 	
 	def pathMap = [ 
@@ -123,6 +124,12 @@ task cg(dependsOn: 'copy-base')  << {
 							subsystemModelPackage:project.appDir.path + File.separator + 'scripts' + File.separator + 'sql',
 							renameSrc:"ModelName(.+)\\.template",
 							include:"**/ModelName.sql.template"
+						],
+						[
+							from:"${getTemplateName()}/scripts/curl",
+							subsystemModelPackage:project.appDir.path + File.separator + 'scripts' + File.separator + 'curl',
+							renameSrc:"ModelName(.+)\\.template",
+							include:"**/ModelName.curl.template"
 						]
 				  ];
 
@@ -276,6 +283,12 @@ class ModelHelper {
 			}
 		}
 		return pks
+	}
+
+	def prepareJson(map){
+        def builder = new groovy.json.JsonBuilder()	
+		builder(map)
+		return builder.toString()
 	}
 	
 	def getHash(column) {
