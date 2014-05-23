@@ -15,6 +15,8 @@ public interface AppController<MB> {
 
     ResponseEntity<MB> delete(MB modelValue,String skGuid);
 
+	ResponseEntity<MB> get(MB modelValue,String skGuid);
+
     ResponseEntity<List<MB>> getAll();
 
 }

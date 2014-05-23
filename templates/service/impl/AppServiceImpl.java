@@ -63,5 +63,20 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
         return modelValueBeans;    
     }
 
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, rollbackFor = { ApplicationException.class })
+    public MB get(MB criteriaValue) {
+
+        ModelManager<M,MB> modelManager = getModelManager();
+
+        M model = modelManager.lookupBySurrogateKey(criteriaValue);
+
+        if(model == null) {
+            return null;
+        }
+
+        return (MB) model.getValue();
+    }
+
     protected abstract ModelManager<M,MB> getModelManager();
 }

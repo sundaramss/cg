@@ -9,6 +9,8 @@ public interface AppService<MB>{
 	MB update(MB modelValueBean);
 
 	MB delete(MB modelValueBean);
+
+	MB get(MB modelValueBean);
 	
 	List<MB> getAll();
 

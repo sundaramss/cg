@@ -63,6 +63,16 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         return new ResponseEntity<List<MB>>(modelValueList, HttpStatus.OK);
     }
 
+	@Override
+    @RequestMapping(method = RequestMethod.GET,value = "/{skGuid}")
+    public ResponseEntity<MB> get(MB criteriaValue,@PathVariable String skGuid) {
+        AppService<MB> appService = getAppService();
+        criteriaValue.setSkGuid(skGuid);
+        MB modelValue = appService.get(criteriaValue);
+        return new ResponseEntity<>(modelValue, HttpStatus.OK);
+
+    }
+
     protected abstract AppService<MB> getAppService();
 
 }

@@ -11,6 +11,8 @@ curl -i -k -X GET "$url"
 
 curl -i -k -X POST "$url" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
 
+curl -i -k -X GET "$url<skguid>" -H "Accept: application/json"
+
 curl -i -k -X PUT "${url}<skguid>" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
 
 curl -i -k -X DELETE "${url}<skguid>" -H "Accept: application/json"  
