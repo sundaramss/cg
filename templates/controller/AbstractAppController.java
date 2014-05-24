@@ -34,7 +34,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
     public ResponseEntity<MB> create(@RequestBody MB modelValue) {
         AppService<MB> appService = getAppService();
         MB createValue = appService.create(modelValue);
-        return new ResponseEntity<>(createValue, HttpStatus.OK);
+        return new ResponseEntity<MB>(createValue, HttpStatus.OK);
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         AppService<MB> appService = getAppService();
 	modelValue.setSkGuid(skGuid);
         MB modifiedValue = appService.update(modelValue);
-        return new ResponseEntity<>(modifiedValue, HttpStatus.OK);
+        return new ResponseEntity<MB>(modifiedValue, HttpStatus.OK);
     }
 
     @Override
@@ -69,7 +69,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         AppService<MB> appService = getAppService();
         criteriaValue.setSkGuid(skGuid);
         MB modelValue = appService.get(criteriaValue);
-        return new ResponseEntity<>(modelValue, HttpStatus.OK);
+        return new ResponseEntity<MB>(modelValue, HttpStatus.OK);
 
     }
 

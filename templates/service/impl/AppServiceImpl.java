@@ -55,7 +55,7 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
     public List<MB> getAll() {
         ModelManager<M,MB> modelManager = getModelManager();
         List<M> modelList = modelManager.getAll();
-        List<MB> modelValueBeans = new ArrayList<>();
+        List<MB> modelValueBeans = new ArrayList<MB>();
         for(M model:modelList) {
             MB modelValueBean = (MB) model.getValue();
             modelValueBeans.add(modelValueBean);
