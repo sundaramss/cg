@@ -103,13 +103,18 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
 
 
     @Override
-    public List<M> getAll() {
+    public List<M> getAll(List<SortOrderValue> sortOrderValues) {
         
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> from = criteriaQuery.from(type);
         CriteriaQuery<M> select = criteriaQuery.select(from);
+        if(! sortOrderValues.isEmpty() ) {
+            prepareOrderList(from,null,sortOrderValues);
+            criteriaQuery.orderBy(sortOrderValues.toArray(new Order[sortOrderValues.size()]));
+        }
+
         TypedQuery<M> typedQuery = entityManager.createQuery(select);
         List<M> resultList = typedQuery.getResultList();
         

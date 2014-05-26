@@ -22,7 +22,7 @@ public interface ModelManager<M,MB> {
     public M lookupByBusinessKey(MB modelValue);
     
         
-    public List<M> getAll();
+    public List<M> getAll(List<SortOrderValue> sortOrderValues);
     
     
 }

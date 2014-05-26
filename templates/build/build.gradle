@@ -27,6 +27,7 @@ dependencies{
     compile "org.springframework:spring-orm:\$springVersion"
     compile "javax.servlet:jstl:1.1.2","taglibs:standard:1.1.2"
     compile "commons-beanutils:commons-beanutils:20030211.134440"
+    compile "org.apache.commons:commons-lang3:3.3.2"
     compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
     compile "org.hibernate:hibernate-entitymanager:4.1.4.Final"
     compile "org.hibernate:hibernate-validator:4.3.0.Final"

@@ -4,6 +4,7 @@ import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.model.Model;
 import ${config.project.packageName}.model.ModelManager;
 import ${config.project.packageName}.model.value.ModelValueBean;
+import ${config.project.packageName}.model.value.SortOrderValue;
 import ${config.project.packageName}.service.AppService;
 
 import java.util.List;
@@ -52,9 +53,9 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, rollbackFor = { ApplicationException.class })
-    public List<MB> getAll() {
+    public List<MB> getAll(List<SortOrderValue> sortOrderValues) {
         ModelManager<M,MB> modelManager = getModelManager();
-        List<M> modelList = modelManager.getAll();
+        List<M> modelList = modelManager.getAll(sortOrderValues);
         List<MB> modelValueBeans = new ArrayList<MB>();
         for(M model:modelList) {
             MB modelValueBean = (MB) model.getValue();

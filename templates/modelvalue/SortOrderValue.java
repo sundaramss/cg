@@ -55,7 +55,7 @@ public class SortOrderValue implements Order,Serializable{
     	if(name == null) return;
 
     	String[] columns = name.split("\\\\.");
-    	if( columns.length == 2) {
+    	if( columns.length == 2 && map != null) {
     		Join<? extends Model,? extends Model> j = map.get(columns[0]);
     		if(j == null) {
     			j = root.join(columns[0]);
