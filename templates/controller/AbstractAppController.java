@@ -111,7 +111,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(jsonString, HashMap.class);
+            return objectMapper.readValue(jsonString, LinkedHashMap.class);
         } catch (IOException e) {
            // e.printStackTrace();
         }
