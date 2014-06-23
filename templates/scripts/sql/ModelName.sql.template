@@ -20,7 +20,7 @@
 	}
 %>
 
-DROP TABLE ${modelData.tableName};
+DROP TABLE IF EXISTS ${modelData.tableName};
 
 CREATE TABLE ${modelData.tableName}(${fields.join(',')});
 
