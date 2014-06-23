@@ -1,14 +1,21 @@
 <%
 	def fields=[:]
+	def sortFields=[:]
 	modelData.columns.each{ column ->
 		fields.put(modelHelper.getVariableRef(column),""); 
+		if(column.sort){
+			sortFields.put(modelHelper.getVariableRef(column),"true"); 
+		}
 	}
 	def url = "http://localhost:7070/${config.project.name}/rest/${modelData.className.toLowerCase()}/";
 	def jsonData=modelHelper.prepareJson(fields).replace("\"","\\\"")
+	def sortFieldsJsonData = modelHelper.prepareJson(sortFields).replace("\"","\\\"").replace("{","\\{").replace("}","\\}")
 %>
 
 curl -i -k -X GET "$url" 
-
+<%if(sortFields.size()>0){%>
+curl -i -k -X GET "$url?sb=$sortFieldsJsonData" 
+<%}%>
 curl -i -k -X POST "$url" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
 
 curl -i -k -X GET "$url<skguid>" -H "Accept: application/json"
