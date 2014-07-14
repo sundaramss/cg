@@ -1,6 +1,6 @@
 package ${config.project.packageName}.service;
 
-import ${config.project.packageName}.model.value.SortOrderValue;
+import ${config.project.packageName}.model.value.DataSet;
 import java.util.List;
 
 public interface AppService<MB>{
@@ -13,6 +13,6 @@ public interface AppService<MB>{
 
 	MB get(MB modelValueBean);
 	
-	List<MB> getAll(List<SortOrderValue> sortOrderValues);
+	List<MB> getList(DataSet dataSet);
 
 }

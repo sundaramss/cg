@@ -18,7 +18,10 @@ public class FilterValue<T> implements Serializable{
 
     private Filter filter;
     private Attribute field;
-    
+
+    private Expression<T> valueExpression;
+    private Expression<T> fieldExpression;
+
     public Filter getFilter() {
 		return filter;
 	}
@@ -37,21 +40,29 @@ public class FilterValue<T> implements Serializable{
 	}    
 
 
-    private Expression<T> getValueExpression(CriteriaBuilder criteriaBuilder,Serializable bean) {
+     private void prepareValueExpression(CriteriaBuilder criteriaBuilder, Serializable bean) {
        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(bean);
        T value = (T) fieldAccessor.getPropertyType(field.getName());
-       return criteriaBuilder.literal(value);
+       this.valueExpression = criteriaBuilder.literal(value);
     }
 
-    private Expression<T> getFieldExpression(Root<?> root){
+    private void prepareFieldExpression(Root<?> root){
         String fieldPath = field.getName();
-       return root.get(fieldPath);
+       this.fieldExpression = root.get(fieldPath);
+    }
+
+    public <T> Expression<T> getValueExpression() {
+        return (Expression<T>) valueExpression;
+    }
+
+    public <T> Expression<T> getFieldExpression() {
+        return (Expression<T>) fieldExpression;
     }
 
     public Predicate preparePredicate(CriteriaBuilder criteriaBuilder,Root<?> root,Serializable serializable) {
-        Expression<T> fieldExpression = getFieldExpression(root);
-        Expression<T> valueExpression = getValueExpression(criteriaBuilder,serializable);
-        return filter.preparePredicate(criteriaBuilder,fieldExpression,valueExpression);
+        prepareFieldExpression(root);
+        prepareValueExpression(criteriaBuilder, serializable);
+        return filter.preparePredicate(criteriaBuilder,this);
     }
 }
 

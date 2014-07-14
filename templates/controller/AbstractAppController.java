@@ -4,28 +4,33 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import ${config.project.packageName}.controller.helper.DataSetBuilder;
+import ${config.project.packageName}.controller.helper.RequestFilterValue;
+import ${config.project.packageName}.controller.helper.RequestParamParser;
+import ${config.project.packageName}.model.value.DataSet;
 import ${config.project.packageName}.model.value.ModelValueBean;
-import ${config.project.packageName}.model.value.SortOrderValue;
 import ${config.project.packageName}.service.AppService;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.TypeUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import ${config.project.packageName}.service.ServiceLocator;
 
 /**
  *
- * @author sundaramss
+ * @author ${config.project.author}
  */
 public abstract class AbstractAppController<MB extends ModelValueBean> implements AppController<MB>{
  
+     protected RequestParamParser requestParamParser=new RequestParamParser();
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -64,8 +69,8 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
     @RequestMapping(method = RequestMethod.GET,value = "/")
     public ResponseEntity<List<MB>> getAll(@RequestParam(value = "sb",required = false) String sortBy) {
         AppService<MB> appService = getAppService();
-        List<SortOrderValue> sortOrderValues = prepareSortOrderList(sortBy);
-        List<MB> modelValueList = appService.getAll(sortOrderValues);
+        DataSet dataSet = prepareDataSet(null,sortBy);
+        List<MB> modelValueList = appService.getList(dataSet);
         return new ResponseEntity<List<MB>>(modelValueList, HttpStatus.OK);
     }
 
@@ -78,47 +83,33 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         return new ResponseEntity<MB>(modelValue, HttpStatus.OK);
 
     }
+  
 
-    private List<SortOrderValue> prepareSortOrderList(String jsonString) {
+    private DataSet prepareDataSet(String filterByJson,String sortByJson){
 
-        Map<String, Object> sortOrderMap = prepareMap(jsonString);
-        List<SortOrderValue> sortOrderValues = new ArrayList<SortOrderValue>(sortOrderMap.size());
+        DataSetBuilder dataSetBuilder = getDataSetBuilder();
 
-        for (Map.Entry<String, Object> entry : sortOrderMap.entrySet()) {
-            SortOrderValue sortOrderValue = new SortOrderValue();
-            String columnName = entry.getKey();
-            if (StringUtils.isBlank(columnName)) {
-                continue;
+        if(StringUtils.isNotBlank(sortByJson)){
+            Map<String, Object> sortOrderMap = requestParamParser.prepareSortByParamMap(sortByJson);
+            for (Map.Entry<String, Object> entry : sortOrderMap.entrySet()) {
+                dataSetBuilder.addSort(entry.getKey(),entry.getValue());
             }
-            Object value = entry.getValue();
-            boolean ascending = false;
-            if (TypeUtils.isInstance(value, Boolean.TYPE)) {
-                ascending = BooleanUtils.toBooleanDefaultIfNull((Boolean) value, false);
-            }
-            sortOrderValue.setAsending(ascending);
-            sortOrderValue.setColumnName(columnName);
-            sortOrderValues.add(sortOrderValue);
         }
 
-        return sortOrderValues;
-    }
-
-    private Map<String, Object> prepareMap(String jsonString) {
-
-        if (StringUtils.isBlank(jsonString)) {
-            return Collections.emptyMap();
+        if(StringUtils.isNotBlank(filterByJson)){
+           List<RequestFilterValue> filterByList = requestParamParser.parseFilterBy(filterByJson);
+           for(RequestFilterValue requestFilterValue:filterByList){
+               dataSetBuilder.addKey(requestFilterValue.getField())
+                       .addValue(requestFilterValue.getValue())
+                       .addOperator(requestFilterValue.getOperator())
+                       .next();
+           }
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(jsonString, LinkedHashMap.class);
-        } catch (IOException e) {
-           // e.printStackTrace();
-        }
-        return Collections.emptyMap();
-
+        return dataSetBuilder.toDataSet();
     }
 
     protected abstract AppService<MB> getAppService();
+
+    protected abstract DataSetBuilder getDataSetBuilder();
 
 }

@@ -10,14 +10,18 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    jpametamodel
+}
+
 sourceSets {
         generated
 }
 
 sourceSets.generated.java.srcDirs = ['src/main/generated']
 
-configurations {
-        jpametamodel
+sourceSets.all {
+    compileClasspath += configurations.jpametamodel
 }
 
 dependencies{

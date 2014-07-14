@@ -3,6 +3,7 @@ package ${config.project.packageName}.service.impl;
 import ${config.project.packageName}.exception.ApplicationException;
 import ${config.project.packageName}.model.Model;
 import ${config.project.packageName}.model.ModelManager;
+import ${config.project.packageName}.model.value.DataSet;
 import ${config.project.packageName}.model.value.ModelValueBean;
 import ${config.project.packageName}.model.value.SortOrderValue;
 import ${config.project.packageName}.service.AppService;
@@ -53,9 +54,9 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS, rollbackFor = { ApplicationException.class })
-    public List<MB> getAll(List<SortOrderValue> sortOrderValues) {
+    public List<MB> getList(DataSet dataSet) {
         ModelManager<M,MB> modelManager = getModelManager();
-        List<M> modelList = modelManager.getAll(sortOrderValues);
+        List<M> modelList = modelManager.lookupByCriteria(dataSet.getBean(),dataSet);
         List<MB> modelValueBeans = new ArrayList<MB>();
         for(M model:modelList) {
             MB modelValueBean = (MB) model.getValue();

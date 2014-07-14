@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import ${config.project.packageName}.controller.helper.DataSetBuilder;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.controller.AbstractAppController; 
 import ${config.project.packageName}.service.ServiceLocator; 
@@ -26,7 +27,11 @@ public class ${modelData.className}Controller extends AbstractAppController<${mo
 
     protected ${modelData.className}Service getAppService() {
 		return ServiceLocator.getInstance().get${modelData.className}Service();
- 
-	}
+ 	}
 
+	@Override
+    protected DataSetBuilder getDataSetBuilder() {
+        return null;
+    }
+	
 }

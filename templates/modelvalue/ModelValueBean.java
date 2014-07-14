@@ -13,6 +13,6 @@ public interface ModelValueBean extends Serializable{
 	public String getSkGuid();
 	
     public void setSkGuid(String skGuid);
-    public FilterValue[] getBusinessKeys();
+    public GroupFilterValue getBusinessKeys();
     
 }

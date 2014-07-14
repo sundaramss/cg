@@ -86,11 +86,11 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
-        FilterValue[] filters = criteriaValue.getBusinessKeys();
-        Predicate[] businessKeyPredicate = preparePredicates(criteriaValue,criteriaBuilder,mainRoot,filters);
+        GroupFilterValue groupFilterValue = criteriaValue.getBusinessKeys();
+        Predicate wherePredicate = preparePredicate(groupFilterValue,criteriaBuilder,mainRoot,criteriaValue);
         
         try{
-            Predicate andPredicate = criteriaBuilder.and(businessKeyPredicate);
+            Predicate andPredicate = criteriaBuilder.and(wherePredicate);
             criteriaQuery.where(andPredicate);
             M model = entityManager.createQuery(criteriaQuery).getSingleResult();
             return model;
@@ -101,48 +101,33 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         return null;
     }
 
-
     @Override
-    public List<M> getAll(List<SortOrderValue> sortOrderValues) {
-        
-        Class<M> type = getEntityType();
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(type);
-        Root<M> from = criteriaQuery.from(type);
-        CriteriaQuery<M> select = criteriaQuery.select(from);
-        if(! sortOrderValues.isEmpty() ) {
-            prepareOrderList(from,null,sortOrderValues);
-            criteriaQuery.orderBy(sortOrderValues.toArray(new Order[sortOrderValues.size()]));
-        }
-
-        TypedQuery<M> typedQuery = entityManager.createQuery(select);
-        List<M> resultList = typedQuery.getResultList();
-        
-        return resultList;
-        
-    }
-
-    protected List<M> lookupByCriteria(Serializable value,List<FilterValue> filterValueList){
+    public List<M> lookupByCriteria(Serializable value,DataSet dataSet){
 		
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
 
-        FilterValue[] filters = filterValueList.toArray(new FilterValue[0]);
-        Predicate[] predicates = preparePredicates(value,criteriaBuilder,mainRoot,filters);
-        //TODO needs to improve join, or,group conditions
-        if( predicates.length > 0 ) {
-            Predicate andPredicate = criteriaBuilder.and(predicates);
-            criteriaQuery.where(andPredicate);
+        GroupFilterValue groupFilterValue = dataSet.getGroupFilterValue();
+
+        Predicate predicate = preparePredicate(groupFilterValue,criteriaBuilder,mainRoot,value);
+        if( predicate != null ) {
+            criteriaQuery.where(predicate);
+        }
+
+        List<SortOrderValue> sortOrderValues = dataSet.getSortOrderValues();
+        if(! sortOrderValues.isEmpty() ) {
+            prepareOrderList(mainRoot,null,sortOrderValues);
+            criteriaQuery.orderBy(sortOrderValues.toArray(new Order[sortOrderValues.size()]));
         }
 
         List<M> resultList = entityManager.createQuery(criteriaQuery).getResultList();
         return  resultList;
     }
-    
 
-    protected Page<M> lookupByCriteria(Serializable value, int pageNumber, int pageSize, List<FilterValue> filterValueList, List<SortOrderValue> sortOrderList) {
+    protected Page<M> lookupByCriteria(Serializable value, int pageNumber, int pageSize, DataSet dataSet) {
+
 
         Class<M> type = getEntityType();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -150,24 +135,24 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         Root<M> root = criteriaCountQuery.from(type);
         criteriaCountQuery.select(criteriaBuilder.count(root));
 
-        FilterValue[] filters = filterValueList.toArray(new FilterValue[0]);
-        Predicate[] predicates = preparePredicates(value,criteriaBuilder,root,filters);
+        GroupFilterValue groupFilterValue = dataSet.getGroupFilterValue();
 
-        if(predicates != null ) {
-            Predicate andPredicate = criteriaBuilder.and(predicates);
-            criteriaCountQuery.where(andPredicate);
+        Predicate wherePredicate = preparePredicate(groupFilterValue,criteriaBuilder,root,value);
+        if(wherePredicate != null) {
+            criteriaCountQuery.where(wherePredicate);
         }
 
         Page<M> page = new Page<M>();
         int totalRecords =  entityManager.createQuery(criteriaCountQuery).getSingleResult().intValue();
         page.setTotal(totalRecords);
+
         if(totalRecords == 0) {
             page.setModelValueList(Collections.<M>emptyList());
             return page;
         }
 
+        List<SortOrderValue> sortOrderList = dataSet.getSortOrderValues();
         validateSortColumns(sortOrderList);
-
 
         CriteriaQuery<M>  criteriaQuery = criteriaBuilder.createQuery(type);
         Root<M> mainRoot = criteriaQuery.from(type);
@@ -179,11 +164,10 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
             criteriaQuery.orderBy(sortOrderList.toArray(new Order[0]));
         }
 
-        predicates = preparePredicates(value,criteriaBuilder,mainRoot,filters);
+        wherePredicate = preparePredicate(groupFilterValue,criteriaBuilder,mainRoot,value);
 
-        if(predicates!=null  ){
-            Predicate andPredicate = criteriaBuilder.and(predicates);
-            criteriaQuery.where(andPredicate);
+        if(wherePredicate!=null  ){
+            criteriaQuery.where(wherePredicate);
         }
 
         TypedQuery<M> typedQuery = entityManager.createQuery(criteriaQuery);
@@ -224,16 +208,48 @@ public abstract class AbstractModelManager<M extends Model, MB extends ModelValu
         
     }
 
-    private Predicate[] preparePredicates(Serializable serializable,CriteriaBuilder criteriaBuilder,Root<M> root,FilterValue... filters) {
+    protected Predicate preparePredicate(GroupFilterValue groupFilter,CriteriaBuilder criteriaBuilder,Root<?> root,Serializable bean) {
 
-        List<Predicate> predicateList = new ArrayList<Predicate>(filters.length);
-
-        for(FilterValue filterValue:filters) {
-            Predicate predicate = filterValue.preparePredicate(criteriaBuilder,root,serializable);
-            predicateList.add(predicate);
+        if( groupFilter == null || groupFilter.getFilterValues() == null ){
+            return null;
         }
 
-        return predicateList.toArray(new Predicate[0]);  //To change body of created methods use File | Settings | File Templates.
+        List<FilterValue<?>> filterValues = groupFilter.getFilterValues();
+
+        List<Predicate>  predicateList =  new ArrayList<Predicate>(filterValues.size());
+
+        for(FilterValue<?> filterValue:filterValues){
+            predicateList.add(filterValue.preparePredicate(criteriaBuilder,root,bean));
+        }
+
+        Predicate filterPredicate = null;
+        if(! predicateList.isEmpty()){
+            if(groupFilter.getFilterListGroupType() == GroupFilter.GroupType.OR && predicateList.size() > 1) {
+                filterPredicate = criteriaBuilder.or(predicateList.toArray(new Predicate[predicateList.size()]));
+            }else {
+                filterPredicate = criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+            }
+        }
+
+        Predicate groupPredicate = preparePredicate(groupFilter.getGroupFilterValue(),criteriaBuilder,root,bean);
+        Predicate returnPredicate = filterPredicate;
+        if( groupPredicate != null ) {
+            if(  groupFilter.getGroupType() == GroupFilter.GroupType.OR) {
+                if(filterPredicate !=null){
+                    returnPredicate = criteriaBuilder.or(filterPredicate,groupPredicate);
+                }else{
+                    returnPredicate = criteriaBuilder.or(groupPredicate);
+                }
+            }else {
+                if(filterPredicate !=null){
+                    returnPredicate = criteriaBuilder.and(filterPredicate,groupPredicate);
+                }else{
+                    returnPredicate = criteriaBuilder.and(groupPredicate);
+                }
+            }
+        }
+
+        return returnPredicate;
     }
 
 
