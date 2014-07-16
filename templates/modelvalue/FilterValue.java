@@ -22,6 +22,14 @@ public class FilterValue<T> implements Serializable{
     private Expression<T> valueExpression;
     private Expression<T> fieldExpression;
 
+	public FilterValue(){
+
+    }
+
+    public FilterValue(Attribute<?,?> field){
+        this.field = field;
+    }
+
     public Filter getFilter() {
 		return filter;
 	}

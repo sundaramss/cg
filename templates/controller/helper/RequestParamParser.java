@@ -50,9 +50,9 @@ public class RequestParamParser {
         return requestFilterValues;
     }
 
-    public Map<String,Object> prepareSortByParamMap(String sortBy) {
+	public Map<String,String> prepareSortByParamMap(String sortBy) {
 
-        Map<String,Object> sortMap = Collections.emptyMap();
+        Map<String,String> sortMap = Collections.emptyMap();
 
         if (StringUtils.isBlank(sortBy)) {
             return sortMap;
@@ -67,7 +67,7 @@ public class RequestParamParser {
         return sortMap;
 
     }
-
+	
     public static void main(String[] args) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         //JsonNode  jsonNode = objectMapper.readTree("{\"or\":[{\"role\":\"clerk\",\"oper\":\"eq\"}]}");

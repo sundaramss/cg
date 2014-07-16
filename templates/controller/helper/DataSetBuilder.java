@@ -1,13 +1,12 @@
 package ${config.project.packageName}.controller.helper;
 
 import ${config.project.packageName}.model.value.*;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.TypeUtils;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.DirectFieldAccessor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 public abstract class DataSetBuilder {
 
-    private static String defaultOperator ="eq";
+        private static String defaultOperator ="eq";
     private GroupFilterValue rootGroupFilterValue = new GroupFilterValue();
 
     protected static Map<String,Filter> filterTypeMap = new LinkedHashMap<String, Filter>();
@@ -40,7 +39,7 @@ public abstract class DataSetBuilder {
         variableType.put(Double.class,Integer.valueOf(4));
     }
 
-    private List<SortOrderValue> sortOrderValues;
+    private List<SortOrderValue> sortOrderValues=new ArrayList<SortOrderValue>();
 
     public DataSetBuilder(Serializable bean){
         this.bean = bean;
@@ -60,7 +59,9 @@ public abstract class DataSetBuilder {
     }
 
     protected void addFilterValue(){
-        rootGroupFilterValue.getFilterValues().add(this.filterValue);
+        if(this.filterValue != null) {
+            rootGroupFilterValue.getFilterValues().add(this.filterValue);
+        }
     }
 
     public DataSetBuilder addValue(JsonNode jsonNode){
@@ -106,18 +107,18 @@ public abstract class DataSetBuilder {
         return value;
     }
 
-    public DataSetBuilder addSort(String columnName,Object value){
-        if (StringUtils.isBlank(columnName)) {
+    public DataSetBuilder addSort(String columnName,String value){
+
+        if (StringUtils.isBlank(columnName) || ! isColumnExist(columnName)) {
             return this;
         }
+
         SortOrderValue sortOrderValue = new SortOrderValue();
-        boolean ascending = false;
-        if (TypeUtils.isInstance(value, Boolean.TYPE)) {
-            ascending = BooleanUtils.toBooleanDefaultIfNull((Boolean) value, false);
-        }
+        boolean ascending = Boolean.valueOf(value);
         sortOrderValue.setAsending(ascending);
         sortOrderValue.setColumnName(columnName);
         this.sortOrderValues.add(sortOrderValue);
+
         return this;
     }
 
@@ -129,7 +130,9 @@ public abstract class DataSetBuilder {
         if(this.rootGroupFilterValue != null){
             dataSet.setGroupFilterValue(this.rootGroupFilterValue);
         }
-
+        if(this.sortOrderValues != null){
+            dataSet.setSortOrderValues(this.sortOrderValues);
+        }
         if(this.bean != null){
             dataSet.setBean(this.bean);
         }
@@ -139,4 +142,6 @@ public abstract class DataSetBuilder {
 
 
     protected abstract FilterValue<?> getFilterValue(String field);
+
+    protected abstract boolean isColumnExist(String name);
 }

@@ -90,8 +90,8 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         DataSetBuilder dataSetBuilder = getDataSetBuilder();
 
         if(StringUtils.isNotBlank(sortByJson)){
-            Map<String, Object> sortOrderMap = requestParamParser.prepareSortByParamMap(sortByJson);
-            for (Map.Entry<String, Object> entry : sortOrderMap.entrySet()) {
+            Map<String, String> sortOrderMap = requestParamParser.prepareSortByParamMap(sortByJson);
+            for (Map.Entry<String, String> entry : sortOrderMap.entrySet()) {
                 dataSetBuilder.addSort(entry.getKey(),entry.getValue());
             }
         }

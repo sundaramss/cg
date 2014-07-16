@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.controller.helper.${modelData.className}DataSetBuilder;
 import ${config.project.packageName}.controller.helper.DataSetBuilder;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.controller.AbstractAppController; 
@@ -31,7 +32,7 @@ public class ${modelData.className}Controller extends AbstractAppController<${mo
 
 	@Override
     protected DataSetBuilder getDataSetBuilder() {
-        return null;
+        return new ${modelData.className}DataSetBuilder(new ${modelData.className}Value());
     }
 	
 }

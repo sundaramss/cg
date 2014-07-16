@@ -15,14 +15,9 @@ configurations {
 }
 
 sourceSets {
-        generated
+    generated.java.srcDirs=['src/main/generated']
 }
 
-sourceSets.generated.java.srcDirs = ['src/main/generated']
-
-sourceSets.all {
-    compileClasspath += configurations.jpametamodel
-}
 
 dependencies{
 
@@ -55,3 +50,4 @@ task generateMetaModel(type: JavaCompile, group: 'build', description: 'Generate
 }
 
 compileJava.dependsOn generateMetaModel
+compileJava.source sourceSets.generated.java, sourceSets.main.java
