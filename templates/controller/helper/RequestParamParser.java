@@ -30,20 +30,16 @@ public class RequestParamParser {
 
     private List<RequestFilterValue> prepareJsonNodes(JsonNode jsonNode){
         List<RequestFilterValue> requestFilterValues = new ArrayList<RequestFilterValue>();
-        Iterator<JsonNode> iterator= jsonNode.getElements();
-        while(iterator.hasNext()){
-            JsonNode jsonNode1 = iterator.next();
-            Iterator<Map.Entry<String,JsonNode>> fields =  jsonNode1.getFields();
-            RequestFilterValue requestFilterValue = null;
-            while(fields.hasNext()) {
-                Map.Entry<String, JsonNode> entry = fields.next();
-                if(StringUtils.equalsIgnoreCase(entry.getKey(),"opt") && requestFilterValue != null){
-                    requestFilterValue.setOperator(entry.getValue().asText());
-                }else{
-                    requestFilterValue = new RequestFilterValue();
-                    requestFilterValue.setField(entry.getKey());
-                    requestFilterValue.setValue(entry.getValue());
-                }
+        Iterator<Map.Entry<String,JsonNode>> fields =  jsonNode.getFields();
+        RequestFilterValue requestFilterValue = null;
+        while(fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            if(StringUtils.equalsIgnoreCase(entry.getKey(),"opt") && requestFilterValue != null){
+                requestFilterValue.setOperator(entry.getValue().asText());
+            }else{
+                requestFilterValue = new RequestFilterValue();
+                requestFilterValue.setField(entry.getKey());
+                requestFilterValue.setValue(entry.getValue());
                 requestFilterValues.add(requestFilterValue);
             }
         }

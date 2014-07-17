@@ -48,10 +48,10 @@ public class FilterValue<T> implements Serializable{
 	}    
 
 
-     private void prepareValueExpression(CriteriaBuilder criteriaBuilder, Serializable bean) {
+     protected void prepareValueExpression(CriteriaBuilder criteriaBuilder, Serializable bean) {
        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(bean);
        T value = (T) fieldAccessor.getPropertyValue(field.getName());
-       this.valueExpression = criteriaBuilder.literal(value);
+       this.valueExpression = filter.prepareValueExpression(criteriaBuilder,value);
     }
 
     private void prepareFieldExpression(Root<?> root){

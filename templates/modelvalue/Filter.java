@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
  */
 public interface Filter extends Serializable{
 
+	public <T> Expression<T> prepareValueExpression(CriteriaBuilder criteriaBuilder,T value);
 	public <T> Predicate preparePredicate(CriteriaBuilder criteriaBuilder, FilterValue<T> filterValue);
     
 }

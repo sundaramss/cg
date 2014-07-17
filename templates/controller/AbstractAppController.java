@@ -67,9 +67,9 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
     @Override
     @RequestMapping(method = RequestMethod.GET,value = "/")
-    public ResponseEntity<List<MB>> getAll(@RequestParam(value = "sb",required = false) String sortBy) {
+    public ResponseEntity<List<MB>> getAll(@RequestParam(value = "sb",required = false) String sortBy,@RequestParam(value = "fb",required = false) String filterBy) {
         AppService<MB> appService = getAppService();
-        DataSet dataSet = prepareDataSet(null,sortBy);
+        DataSet dataSet = prepareDataSet(filterBy,sortBy);
         List<MB> modelValueList = appService.getList(dataSet);
         return new ResponseEntity<List<MB>>(modelValueList, HttpStatus.OK);
     }

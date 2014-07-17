@@ -17,6 +17,6 @@ public interface AppController<MB> {
 
     ResponseEntity<MB> get(MB modelValue,String skGuid);
 
-    ResponseEntity<List<MB>> getAll(String sortBy);
+    ResponseEntity<List<MB>> getAll(String sortBy,String filterBy);
 
 }
