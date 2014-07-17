@@ -50,7 +50,7 @@ public class FilterValue<T> implements Serializable{
 
      private void prepareValueExpression(CriteriaBuilder criteriaBuilder, Serializable bean) {
        DirectFieldAccessor fieldAccessor = new DirectFieldAccessor(bean);
-       T value = (T) fieldAccessor.getPropertyType(field.getName());
+       T value = (T) fieldAccessor.getPropertyValue(field.getName());
        this.valueExpression = criteriaBuilder.literal(value);
     }
 
