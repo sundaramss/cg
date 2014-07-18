@@ -16,7 +16,7 @@ project{
 }
 
 softwareStack{
-	springVersion = "3.1.1.RELEASE"
+	springVersion = "3.2.9.RELEASE"
 	sourceCompatibility = "1.6"
 	slf4jVersion="1.6.1"
 }
