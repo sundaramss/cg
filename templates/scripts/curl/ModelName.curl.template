@@ -14,7 +14,7 @@
 
 curl -i -k -X GET "$url" 
 <%if(sortFields.size()>0){%>
-curl -i -k -X GET "$url?sb=$sortFieldsJsonData" 
+curl -i -k -X GET "$url?sb=$sortFieldsJsonData&fb=$jsonData" 
 <%}%>
 curl -i -k -X POST "$url" -H "Content-Type:application/json; charset=utf-8"  -H "Accept: application/json" -d "$jsonData"
 
