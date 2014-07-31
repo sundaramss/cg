@@ -39,25 +39,10 @@ public class ${modelData.className}DataSetBuilder extends DataSetBuilder {
     }
 
     @Override
-    protected FilterValue<?> getFilterValue(String field) {
-        FilterValue<?> filterValue = filterValueMap.get(field);
-        if( filterValue == null) {
-            return null;
-        }
-        try {
-            return (FilterValue<?>) BeanUtils.cloneBean(filterValue);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+	protected Map<String,FilterValue<?>> getFilterValueMap(){
+		return filterValueMap;
+	}
+	    
     @Override
     protected boolean isColumnExist(String name) {
         return columnSet.contains(name);

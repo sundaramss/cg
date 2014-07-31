@@ -1,11 +1,13 @@
 package ${config.project.packageName}.controller.helper;
 
 import ${config.project.packageName}.model.value.*;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.beans.DirectFieldAccessor;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -141,7 +143,27 @@ public abstract class DataSetBuilder {
     }
 
 
-    protected abstract FilterValue<?> getFilterValue(String field);
+    protected FilterValue<?> getFilterValue(String field) {
+        Map<String,FilterValue<?>> filterValueMap = getFilterValueMap();
+        FilterValue<?> filterValue = filterValueMap.get(field);
+        if( filterValue == null) {
+            return null;
+        }
+        try {
+            return (FilterValue<?>) BeanUtils.cloneBean(filterValue);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected abstract Map<String,FilterValue<?>> getFilterValueMap();
 
     protected abstract boolean isColumnExist(String name);
 }
