@@ -59,7 +59,7 @@ public abstract class AppServiceImpl<M extends Model,MB extends ModelValueBean> 
         List<M> modelList = modelManager.lookupByCriteria(dataSet.getBean(),dataSet);
         List<MB> modelValueBeans = new ArrayList<MB>();
         for(M model:modelList) {
-            MB modelValueBean = (MB) model.getValue();
+            MB modelValueBean = (MB) model.populateValue(null,dataSet.getFieldSet());
             modelValueBeans.add(modelValueBean);
         }
         return modelValueBeans;    

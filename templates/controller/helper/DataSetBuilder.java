@@ -18,7 +18,8 @@ import java.util.Map;
  */
 public abstract class DataSetBuilder {
 
-        private static String defaultOperator ="eq";
+    private static String defaultOperator ="eq";
+	private Enum<?> fieldSet;
     private GroupFilterValue rootGroupFilterValue = new GroupFilterValue();
 
     protected static Map<String,Filter> filterTypeMap = new LinkedHashMap<String, Filter>();
@@ -43,8 +44,9 @@ public abstract class DataSetBuilder {
 
     private List<SortOrderValue> sortOrderValues=new ArrayList<SortOrderValue>();
 
-    public DataSetBuilder(Serializable bean){
+    public DataSetBuilder(Enum<?> fieldSet,Serializable bean){
         this.bean = bean;
+		this.fieldSet = fieldSet;
     }
 
     public DataSetBuilder addKey(String field){
@@ -138,8 +140,9 @@ public abstract class DataSetBuilder {
         if(this.bean != null){
             dataSet.setBean(this.bean);
         }
-
-        return dataSet;
+		dataSet.setFieldSet(fieldSet);
+        
+		return dataSet;
     }
 
 

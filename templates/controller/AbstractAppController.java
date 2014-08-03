@@ -74,6 +74,16 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         return new ResponseEntity<List<MB>>(modelValueList, HttpStatus.OK);
     }
 
+	@Override
+    @RequestMapping(method = RequestMethod.GET,value = "/fs/{fieldSetName}")
+    public ResponseEntity<List<MB>> getAll(@PathVariable(value = "fieldSetName") String fieldSetName,@RequestParam(value = "sb",required = false) String sortBy,@RequestParam(value = "fb",required = false) String filterBy) {
+        AppService<MB> appService = getAppService();
+        DataSet dataSet = prepareDataSet(fieldSetName,filterBy,sortBy);
+        List<MB> modelValueList = appService.getList(dataSet);
+        return new ResponseEntity<List<MB>>(modelValueList, HttpStatus.OK);
+    }
+
+	
     @Override
     @RequestMapping(method = RequestMethod.GET,value = "/{skGuid}")
     public ResponseEntity<MB> get(MB criteriaValue,@PathVariable String skGuid) {
@@ -81,13 +91,15 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         criteriaValue.setSkGuid(skGuid);
         MB modelValue = appService.get(criteriaValue);
         return new ResponseEntity<MB>(modelValue, HttpStatus.OK);
-
     }
-  
 
     private DataSet prepareDataSet(String filterByJson,String sortByJson){
+        return prepareDataSet(null,filterByJson,sortByJson);
+    }
 
-        DataSetBuilder dataSetBuilder = getDataSetBuilder();
+    private DataSet prepareDataSet(String fieldSetName,String filterByJson,String sortByJson){
+
+        DataSetBuilder dataSetBuilder = getDataSetBuilder(fieldSetName);
 
         if(StringUtils.isNotBlank(sortByJson)){
             Map<String, String> sortOrderMap = requestParamParser.prepareSortByParamMap(sortByJson);
@@ -110,6 +122,6 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
     protected abstract AppService<MB> getAppService();
 
-    protected abstract DataSetBuilder getDataSetBuilder();
+    protected abstract DataSetBuilder getDataSetBuilder(String fieldSetName);
 
 }

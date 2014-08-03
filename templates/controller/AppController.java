@@ -19,4 +19,6 @@ public interface AppController<MB> {
 
     ResponseEntity<List<MB>> getAll(String sortBy,String filterBy);
 
+	ResponseEntity<List<MB>> getAll(String fieldSetName,String sortBy,String filterBy);
+
 }

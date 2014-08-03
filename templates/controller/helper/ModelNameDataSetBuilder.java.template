@@ -34,8 +34,8 @@ public class ${modelData.className}DataSetBuilder extends DataSetBuilder {
     }
 
 
-    public ${modelData.className}DataSetBuilder(Serializable bean) {
-        super(bean);
+    public ${modelData.className}DataSetBuilder(Enum<?> fieldSet,Serializable bean) {
+        super(fieldSet,bean);
     }
 
     @Override

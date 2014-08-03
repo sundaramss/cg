@@ -154,13 +154,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
      }
 
 	 @Override
-     public void populateValue(${modelData.className}Value ${classRef}Value,Enum dataset) {
+     public ${modelData.className}Value populateValue(${modelData.className}Value ${classRef}Value, Enum dataset) {
 		
-		if(	${classRef}Value == null ) return;
+		if(	${classRef}Value == null ){
+			${classRef}Value = new ${modelData.className}Value();
+		}	
 		
 		${classRef}Value.setSkGuid(getSkGuid());
 		
-		if(dataset == null ||  ${modelData.className}Value.${modelData.className}Dataset.class != dataset.getDeclaringClass()) return;
+		if(dataset == null ||  ${modelData.className}Value.${modelData.className}Dataset.class != dataset.getDeclaringClass()){
+			return ${classRef}Value;
+		}
 		
 		${modelData.className}Value.${modelData.className}Dataset myDataset = (${modelData.className}Value.${modelData.className}Dataset)dataset;
 		
@@ -174,6 +178,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 			//User can define new dataset as per need
 		}
 		
+		return ${classRef}Value; 
      }
      
      private void populateAll(${modelData.className}Value ${classRef}Value) {

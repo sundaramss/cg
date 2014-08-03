@@ -11,6 +11,7 @@ public class DataSet  {
     private GroupFilterValue groupFilterValue;
     private List<SortOrderValue> sortOrderValues;
 	private Serializable bean;
+	private Enum<?> fieldSet;
 	
     public GroupFilterValue getGroupFilterValue() {
         return groupFilterValue;
@@ -32,6 +33,14 @@ public class DataSet  {
 
     public void setBean(Serializable bean) {
         this.bean = bean;
+    }
+	
+    public Enum<?> getFieldSet() {
+        return fieldSet;
+    }
+
+    public void setFieldSet(Enum<?> fieldSet) {
+        this.fieldSet = fieldSet;
     }
 
 }

@@ -5,13 +5,7 @@
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,9 +24,24 @@ public class ${modelData.className}Controller extends AbstractAppController<${mo
 		return ServiceLocator.getInstance().get${modelData.className}Service();
  	}
 
+	
 	@Override
-    protected DataSetBuilder getDataSetBuilder() {
-        return new ${modelData.className}DataSetBuilder(new ${modelData.className}Value());
+    protected DataSetBuilder getDataSetBuilder(String fieldSetName) {
+		Enum<?> fieldSet = getFieldSet(fieldSetName);
+        return new ${modelData.className}DataSetBuilder(fieldSet,new ${modelData.className}Value());
+    }
+
+    public ${modelData.className}Value.${modelData.className}Dataset getFieldSet(String fieldSet){
+
+		if(StringUtils.isBlank(fieldSet)){
+            return ${modelData.className}Value.${modelData.className}Dataset.BUSINESS_KEY;
+        }
+		
+        try {
+            return ${modelData.className}Value.${modelData.className}Dataset.valueOf(fieldSet);
+        }catch (IllegalArgumentException ignore){
+            return ${modelData.className}Value.${modelData.className}Dataset.BUSINESS_KEY;
+        }
     }
 	
 }
