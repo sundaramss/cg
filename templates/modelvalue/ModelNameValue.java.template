@@ -23,9 +23,9 @@ import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.
 public class ${modelData.className}Value extends AbstractModelValueBean{
 
 	<% modelData.columns.each {  column -> %>
-	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
+	private <%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
 	<%}%>
-	
+   
 	@XmlTransient
 	@JsonIgnore
 	@Override
@@ -42,12 +42,12 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 
 	<% modelData.columns.each {  column -> %>
 	
-	public  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
-		return this.<%=modelHelper.getVariableRef(column)%>;
+	public  <%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getter(column)%><%=(column.manyToOne)?"Value":""%>() {
+		return this.<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
 	}
 	
-	public  void  <%=modelHelper.setter(column)%>(<%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>) {
-		this.<%=modelHelper.getVariableRef(column)%>=<%=modelHelper.getVariableRef(column)%>;
+	public  void  <%=modelHelper.setter(column)%><%=(column.manyToOne)?"Value":""%>(<%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>) {
+		this.<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>=<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
 	}	
 	<%}%>
 	

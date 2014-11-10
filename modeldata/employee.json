@@ -8,6 +8,7 @@
 				  {"name":"firstName","colName":"emp_first_name","type":"String","colType":"varchar","colSize":"50"}, 
 				  {"name":"lastName","colName":"emp_last_name","type":"String","colType":"varchar","colSize":"50"}, 
 				  {"name":"doj","colName":"emp_doj","type":"java.util.Date","colType":"timestamp"},
-				  {"name":"salary","colName":"emp_salary","type":"double","colType":"numeric","colSize":"13,2"}
+				  {"name":"salary","colName":"emp_salary","type":"double","colType":"numeric","colSize":"13,2"},
+				  {"name":"department","colName":"dpt_sk_guid","type":"Department","colType":"varchar","colSize":"50","manyToOne":"true"}
 	            ]
 }

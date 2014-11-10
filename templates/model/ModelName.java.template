@@ -4,14 +4,10 @@
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
 
@@ -32,12 +28,20 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	@Column(name = "${modelData.pk.colName}")
 	private ${modelData.pk.type} skGuid;
 	
-	<% modelData.columns.each {  column -> %>
+	<% modelData.columns.findAll{!it.manyToOne}.each {  column -> %>
 	@Column(name = "${column.colName}" )
 	@Type(type = "<%=modelHelper.getJavaType(column)%>")
 	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
+	<%}%><%modelData.columns.findAll{it.manyToOne}.each {  column -> %>
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="${column.colName}")
+    private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
+	<%}%><% def childrenColumns=modelHelper.getOneToMany(modelData.className,models);
+    childrenColumns.each {  column -> %>
+    @OneToMany(mappedBy="${column.name}")
+    private List<${column.type}> <%=modelHelper.getVariableRef(column)%>List;
 	<%}%>
-
+    
 	<%if(modelData.recordLog){%>
 	@Column(name = "created_date")
 	@Type(type = "java.sql.Timestamp")
@@ -124,7 +128,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 	@Override
 	public void saveValue(${modelData.className}Value ${classRef}Value) {
-		<%modelData.columns.each {  column -> %>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Value.<%=modelHelper.getter(column)%>();
+		<%modelData.columns.findAll{!it.manyToOne}.each {  column -> %>this.<%=modelHelper.getVariableRef(column)%> = ${classRef}Value.<%=modelHelper.getter(column)%>();
 		<%}%>
 	}
 
@@ -183,7 +187,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
      
      private void populateAll(${modelData.className}Value ${classRef}Value) {
          
-        <% modelData.columns.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <% modelData.columns.findAll{!it.manyToOne}.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
         <%}%>
      }
      

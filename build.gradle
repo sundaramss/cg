@@ -140,7 +140,7 @@ task cg(dependsOn: 'copy-base')  << {
 				  copy {
 					  from map.from
 					  into subsystemModelPackage
-					  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper)
+					  expand(project:project,config:config,modelData:modelData,modelHelper:modelHelper,models:project.ext.modelData)
 					  rename { String fileName ->
 							fileName.replaceAll(map.renameSrc,rName)
 					  }
@@ -305,4 +305,18 @@ class ModelHelper {
 		return "${casting} this.${column.name}${hash}"
 	    
 	}
+    def getOneToMany(className,models){
+        def avlColumns = [];
+        models.each{ model ->
+            
+            model.columns*.manyToOne.eachWithIndex{value,index ->
+               def col = model.columns[index];
+               if(value && col.type == className){ 
+                    avlColumns << col
+                } ;    
+            }
+              
+        }
+        return avlColumns;
+    }
 }
