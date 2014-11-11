@@ -5,6 +5,7 @@
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -18,12 +19,15 @@ import ${config.project.packageName}.model.Model;
 import ${config.project.packageName}.model.value.FilterValue;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.${modelData.className};
 
-@XmlRootElement(name = "${classRef}Value")
+@XmlRootElement(name = "${classRef}")
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ${modelData.className}Value extends AbstractModelValueBean{
 
 	<% modelData.columns.each {  column -> %>
 	private <%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
+	<%}%><% def childrenColumns=modelHelper.getOneToMany(modelData.className,models);
+    childrenColumns.each {  column -> %>
+    private List<${column.type}Value> <%=modelHelper.getVariableRef(column)%>ValueList;
 	<%}%>
    
 	@XmlTransient
@@ -48,6 +52,14 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 	
 	public  void  <%=modelHelper.setter(column)%><%=(column.manyToOne)?"Value":""%>(<%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>) {
 		this.<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>=<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
+	}	
+	<%}%><%childrenColumns.each{  column -> %>
+	public  List<<%=modelHelper.getVariableType(column)%>Value>  <%=modelHelper.getter(column)%>ValueList() {
+		return this.<%=modelHelper.getVariableRef(column)%>ValueList;
+	}
+	
+	public  void  <%=modelHelper.setter(column)%>ValueList(List<<%=modelHelper.getVariableType(column)%>Value>  <%=modelHelper.getVariableRef(column)%>ValueList) {
+		this.<%=modelHelper.getVariableRef(column)%>ValueList=<%=modelHelper.getVariableRef(column)%>ValueList;
 	}	
 	<%}%>
 	

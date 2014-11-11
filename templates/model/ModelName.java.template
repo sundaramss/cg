@@ -38,7 +38,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
     private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
 	<%}%><% def childrenColumns=modelHelper.getOneToMany(modelData.className,models);
     childrenColumns.each {  column -> %>
-    @OneToMany(mappedBy="${column.name}")
+    @OneToMany(mappedBy="${column.name}",fetch=FetchType.LAZY)
     private List<${column.type}> <%=modelHelper.getVariableRef(column)%>List;
 	<%}%>
     
