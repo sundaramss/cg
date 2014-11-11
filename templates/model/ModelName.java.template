@@ -188,7 +188,9 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
      private void populateAll(${modelData.className}Value ${classRef}Value) {
          
         <% modelData.columns.findAll{!it.manyToOne}.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>(this.<%=modelHelper.getVariableRef(column)%>);
+        <%}%><% modelData.columns.findAll{it.manyToOne}.each {  column -> %>	${classRef}Value.<%=modelHelper.setter(column)%>Value(this.<%=modelHelper.getVariableRef(column)%>.getBusinessKeyValue());
         <%}%>
+
      }
      
      private void populateBusinessKey(${modelData.className}Value ${classRef}Value) {
