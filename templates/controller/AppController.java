@@ -11,11 +11,11 @@ public interface AppController<MB> {
 
     ResponseEntity<MB> create(MB modelValue);
 
-    ResponseEntity<MB> update(MB modelValue,String skGuid);
+    ResponseEntity<MB> update(MB modelValue,${config.project.skGuidType} skGuid);
 
-    ResponseEntity<MB> delete(MB modelValue,String skGuid);
+    ResponseEntity<MB> delete(MB modelValue,${config.project.skGuidType} skGuid);
 
-    ResponseEntity<MB> get(MB modelValue,String skGuid);
+    ResponseEntity<MB> get(MB modelValue,${config.project.skGuidType} skGuid);
 
     ResponseEntity<List<MB>> getAll(String sortBy,String filterBy);
 

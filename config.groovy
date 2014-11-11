@@ -13,6 +13,7 @@ project{
      jtaDatasource="java:/comp/env/jdbc/empapp"
      hibernateDialect="org.hibernate.dialect.MySQL5Dialect"
      subsystems=['MasterdataManagement','EmpManagement']
+     skGuidType="String"
 }
 
 softwareStack{

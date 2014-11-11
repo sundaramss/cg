@@ -49,7 +49,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
     @Override
     @RequestMapping(method = RequestMethod.PUT,value = "/{skGuid}")
-    public ResponseEntity<MB> update(@RequestBody MB modelValue,@PathVariable String skGuid) {
+    public ResponseEntity<MB> update(@RequestBody MB modelValue,@PathVariable ${config.project.skGuidType} skGuid) {
         AppService<MB> appService = getAppService();
 	modelValue.setSkGuid(skGuid);
         MB modifiedValue = appService.update(modelValue);
@@ -58,7 +58,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
     @Override
     @RequestMapping(method = RequestMethod.DELETE,value = "/{skGuid}")
-    public ResponseEntity<MB> delete(MB modelValue,@PathVariable String skGuid) {
+    public ResponseEntity<MB> delete(MB modelValue,@PathVariable ${config.project.skGuidType} skGuid) {
         AppService<MB> appService = getAppService();
 	modelValue.setSkGuid(skGuid);
         MB deleteValue = appService.delete(modelValue);
@@ -86,7 +86,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 	
     @Override
     @RequestMapping(method = RequestMethod.GET,value = "/{skGuid}")
-    public ResponseEntity<MB> get(MB criteriaValue,@PathVariable String skGuid) {
+    public ResponseEntity<MB> get(MB criteriaValue,@PathVariable ${config.project.skGuidType} skGuid) {
         AppService<MB> appService = getAppService();
         criteriaValue.setSkGuid(skGuid);
         MB modelValue = appService.get(criteriaValue);

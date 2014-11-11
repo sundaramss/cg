@@ -10,9 +10,9 @@ import ${config.project.packageName}.model.Model;
  */
 public interface ModelValueBean extends Serializable{
 
-	public String getSkGuid();
+	public ${config.project.skGuidType} getSkGuid();
 	
-    public void setSkGuid(String skGuid);
+    public void setSkGuid(${config.project.skGuidType} skGuid);
     public GroupFilterValue getBusinessKeys();
     
 }

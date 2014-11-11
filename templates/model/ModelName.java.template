@@ -67,7 +67,7 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	}
 
 	public ${modelData.className}(${modelData.className}Value ${classRef}Value) {
-		setSkGuid(UUID.randomUUID().toString());
+		<%if(config.project.skGuidType=='String'){%>setSkGuid(UUID.randomUUID().toString());<%}%>
 		saveValue(${classRef}Value);<%if(modelData.recordLog){%>
 		setCreatedBy(${classRef}Value.getCreatedBy());
 		setCreatedDate(new Date());<%}%>

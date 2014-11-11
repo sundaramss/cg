@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 public abstract class AbstractModelValueBean implements  ModelValueBean{
 	
-    private String skGuid;
+    private ${config.project.skGuidType} skGuid;
     
     private Date createdDate;
 
@@ -23,11 +23,11 @@ public abstract class AbstractModelValueBean implements  ModelValueBean{
     @XmlTransient
     private String modifiedBy;
 
-    public String getSkGuid() {
+    public ${config.project.skGuidType} getSkGuid() {
         return skGuid;
     }
 
-    public void setSkGuid(String skGuid) {
+    public void setSkGuid(${config.project.skGuidType} skGuid) {
         this.skGuid = skGuid;
     }
 
