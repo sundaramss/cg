@@ -1,11 +1,13 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
-	
+	def directFields = modelData.columns.findAll{!it.manyToOne};
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def oneToManyModels=modelHelper.getOneToMany(modelData.className,models);
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
+<%if(oneToManyModels){%>import java.util.List;<%}%>
 
 import javax.persistence.*;
 
@@ -13,7 +15,7 @@ import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
-import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value.${modelData.className}Dataset.*;
+//import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value.${modelData.className}Dataset.*;
 /**
  * 
  * @author ${config.project.author}
@@ -28,18 +30,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	@Column(name = "${modelData.pk.colName}")
 	private ${modelData.pk.type} skGuid;
 	
-	<% modelData.columns.findAll{!it.manyToOne}.each {  column -> %>
+	<% directFields.each {  column -> %>
 	@Column(name = "${column.colName}" )
 	@Type(type = "<%=modelHelper.getJavaType(column)%>")
 	private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
-	<%}%><%modelData.columns.findAll{it.manyToOne}.each {  column -> %>
+	<%}%><%manyToOneFields.each {  column -> %>
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="${column.colName}")
     private <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>;
-	<%}%><% def childrenColumns=modelHelper.getOneToMany(modelData.className,models);
-    childrenColumns.each {  column -> %>
-    @OneToMany(mappedBy="${column.name}",fetch=FetchType.LAZY)
-    private List<${column.type}> <%=modelHelper.getVariableRef(column)%>List;
+	<%}%><%oneToManyModels.each {  childModel -> %>
+    @OneToMany(mappedBy="${childModel.className}",fetch=FetchType.LAZY)
+    private List<${childModel.className}> <%=modelHelper.getVariableRef(["name":childModel.className])%>List;
 	<%}%>
     
 	<%if(modelData.recordLog){%>
@@ -74,7 +75,6 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 
 	}
 	<% modelData.columns.each {  column -> %>
-	
 	protected  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
 		return this.<%=modelHelper.getVariableRef(column)%>;
 	}
@@ -82,8 +82,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 	protected  void  <%=modelHelper.setter(column)%>(<%=modelHelper.getVariableType(column)%>  <%=modelHelper.getVariableRef(column)%>) {
 		this.<%=modelHelper.getVariableRef(column)%>=<%=modelHelper.getVariableRef(column)%>;
 	}	
+	<%}%><% oneToManyModels.each {  childModel -> %>
+	protected  List<${childModel.className}>  get${childModel.className}List() {
+		return this.<%=modelHelper.getVariableRef(["name":childModel.className])%>List;
+	}
+	
+	protected  void  set${childModel.className}List(List<${childModel.className}>  <%=modelHelper.getVariableRef(["name":childModel.className])%>List) {
+		this.<%=modelHelper.getVariableRef(["name":childModel.className])%>List= <%=modelHelper.getVariableRef(["name":childModel.className])%>List;
+	}	
 	<%}%>
-	protected ${modelData.pk.type} getSkGuid() {
+
+    protected ${modelData.pk.type} getSkGuid() {
 		return skGuid;
 	}
 

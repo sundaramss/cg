@@ -1,6 +1,8 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
-	
+	def directFields = modelData.columns.findAll{!it.manyToOne};
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def oneToManyModels=modelHelper.getOneToMany(modelData.className,models);
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value;
 
 import java.io.Serializable;
@@ -25,9 +27,8 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 
 	<% modelData.columns.each {  column -> %>
 	private <%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
-	<%}%><% def childrenColumns=modelHelper.getOneToMany(modelData.className,models);
-    childrenColumns.each {  column -> %>
-    private List<${column.type}Value> <%=modelHelper.getVariableRef(column)%>ValueList;
+	<%}%><% oneToManyModels.each {  childModel -> %>
+    private List<${childModel.className}Value> <%=modelHelper.getVariableRef(["name":childModel.className])%>ValueList;
 	<%}%>
    
 	@XmlTransient
@@ -53,13 +54,13 @@ public class ${modelData.className}Value extends AbstractModelValueBean{
 	public  void  <%=modelHelper.setter(column)%><%=(column.manyToOne)?"Value":""%>(<%=modelHelper.getVariableType(column)%><%=(column.manyToOne)?"Value":""%>  <%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>) {
 		this.<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>=<%=modelHelper.getVariableRef(column)%><%=(column.manyToOne)?"Value":""%>;
 	}	
-	<%}%><%childrenColumns.each{  column -> %>
-	public  List<<%=modelHelper.getVariableType(column)%>Value>  <%=modelHelper.getter(column)%>ValueList() {
-		return this.<%=modelHelper.getVariableRef(column)%>ValueList;
+	<%}%><% oneToManyModels.each {  childModel -> %>
+	protected  List<${childModel.className}Value>  get${childModel.className}ValueList() {
+		return this.<%=modelHelper.getVariableRef(["name":childModel.className])%>ValueList;
 	}
 	
-	public  void  <%=modelHelper.setter(column)%>ValueList(List<<%=modelHelper.getVariableType(column)%>Value>  <%=modelHelper.getVariableRef(column)%>ValueList) {
-		this.<%=modelHelper.getVariableRef(column)%>ValueList=<%=modelHelper.getVariableRef(column)%>ValueList;
+	protected  void  set${childModel.className}ValueList(List<${childModel.className}Value>  <%=modelHelper.getVariableRef(["name":childModel.className])%>ValueList) {
+		this.<%=modelHelper.getVariableRef(["name":childModel.className])%>ValueList= <%=modelHelper.getVariableRef(["name":childModel.className])%>ValueList;
 	}	
 	<%}%>
 	

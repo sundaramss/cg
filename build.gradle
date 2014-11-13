@@ -306,17 +306,15 @@ class ModelHelper {
 	    
 	}
     def getOneToMany(className,models){
-        def avlColumns = [];
+        def childModels = [];
         models.each{ model ->
             
-            model.columns*.manyToOne.eachWithIndex{value,index ->
-               def col = model.columns[index];
-               if(value && col.type == className){ 
-                    avlColumns << col
-                } ;    
+            def cols = model.columns*.manyToOne.findAll{it};
+            if( cols && cols.size() > 0 && model.className != className){
+                childModels << model
             }
               
         }
-        return avlColumns;
+        return childModels;
     }
 }
