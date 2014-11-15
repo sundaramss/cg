@@ -18,6 +18,8 @@
 		fields << "created_date timestamp"
 		fields << "modified_date timestamp"
 	}
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def manyToOneModels = modelHelper.getManyToOne(manyToOneFields,models);
 %>
 
 DROP TABLE IF EXISTS ${modelData.tableName};
@@ -25,3 +27,6 @@ DROP TABLE IF EXISTS ${modelData.tableName};
 CREATE TABLE ${modelData.tableName}(${fields.join(',')});
 
 ALTER TABLE ${modelData.tableName} ADD CONSTRAINT UK_${modelData.tableName} UNIQUE (${ukcols.join(',')});
+<%manyToOneFields.eachWithIndex{ field,idx ->%>
+ALTER TABLE ${modelData.tableName} ADD CONSTRAINT FK_${modelData.className}_${manyToOneModels[idx].className} FOREIGN KEY  (${modelData.pk.colName}) REFERENCES ${manyToOneModels[idx].tableName} (${field.colName})
+<%}%>

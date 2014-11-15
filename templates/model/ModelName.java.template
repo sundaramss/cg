@@ -2,6 +2,7 @@
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
 	def directFields = modelData.columns.findAll{!it.manyToOne};
     def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def manyToOneModels = modelHelper.getManyToOne(manyToOneFields,models);
     def oneToManyModels=modelHelper.getOneToMany(modelData.className,models);
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model;
 
@@ -15,6 +16,7 @@ import org.hibernate.annotations.Type;
 
 import ${config.project.packageName}.model.AbstractModel;
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
+<%manyToOneModels.each{model ->%>import ${config.project.packageName}.${model.subsystem.toLowerCase()}.model.value.${model.className}Value;<%}%>
 //import static ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value.${modelData.className}Dataset.*;
 /**
  * 
@@ -71,9 +73,17 @@ public class ${modelData.className} extends AbstractModel<${modelData.className}
 		<%if(config.project.skGuidType=='String'){%>setSkGuid(UUID.randomUUID().toString());<%}%>
 		saveValue(${classRef}Value);<%if(modelData.recordLog){%>
 		setCreatedBy(${classRef}Value.getCreatedBy());
-		setCreatedDate(new Date());<%}%>
-
+		setCreatedDate(new Date());<%}%><%manyToOneFields.each{ column ->%>
+        releateParent(${classRef}Value.get${column.type}Value());
+        <%}%>
 	}
+    <%manyToOneFields.each{ column ->%>
+    private void releateParent(${column.type}Value <%=modelHelper.getVariableRef(column)%>Value){
+        ${column.type} <%=modelHelper.getVariableRef(column)%> = ${column.type}Manager.getInstance().lookupBySurrogateKey(<%=modelHelper.getVariableRef(column)%>Value);
+        this.set${column.type}(<%=modelHelper.getVariableRef(column)%>);
+    }
+    <%}%>
+        
 	<% modelData.columns.each {  column -> %>
 	protected  <%=modelHelper.getVariableType(column)%>  <%=modelHelper.getter(column)%>() {
 		return this.<%=modelHelper.getVariableRef(column)%>;

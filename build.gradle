@@ -317,4 +317,15 @@ class ModelHelper {
         }
         return childModels;
     }
+    def getManyToOne(fields,models){
+        def classNames = fields*.type;
+        if(classNames.size() == 0) return [];
+        def parentModels = []
+        models.each{ model ->
+            if( classNames.contains(model.className) ){
+                parentModels << model;  
+            }
+        }
+        return parentModels;
+    }
 }
