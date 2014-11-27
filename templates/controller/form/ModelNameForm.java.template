@@ -1,0 +1,30 @@
+<%
+	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def manyToOneModels = modelHelper.getManyToOne(manyToOneFields,models).toSet();
+%>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.controller.form;
+
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;<% manyToOneModels.each { mtoModel -> %>
+import ${config.project.packageName}.${mtoModel.subsystem.toLowerCase()}.model.value.${mtoModel.className}Value;    
+<%}%>
+public class ${modelData.className}Form extends ${modelData.className}Value {
+
+	<% manyToOneModels.each { mtoModel -> %>
+    private void init${mtoModel.className}Value(){
+        if(get${mtoModel.className}Value() == null){
+            set${mtoModel.className}Value(new ${mtoModel.className}Value());
+        }
+    }
+    <%mtoModel.columns.each {  column -> def name = column.formName?:column.name;def formColumn =['type':column.type,'name':name];%>
+	public  <%=modelHelper.getVariableType(formColumn)%>  <%=modelHelper.getter(formColumn)%>() {
+        return (get${mtoModel.className}Value() == null)?<%=modelHelper.getDefaultValueForType(column.type)%>:get${mtoModel.className}Value().<%=modelHelper.getter(column)%>();
+	}
+	
+	public  void  <%=modelHelper.setter(formColumn)%>(<%=modelHelper.getVariableType(formColumn)%>  <%=modelHelper.getVariableRef(formColumn)%>) {
+        init${mtoModel.className}Value();
+        get${mtoModel.className}Value().<%=modelHelper.setter(column)%>(<%=modelHelper.getVariableRef(formColumn)%>);
+	}
+	<%} }%>
+
+	
+}

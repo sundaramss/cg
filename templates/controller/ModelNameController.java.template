@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.controller.helper.${modelData.className}DataSetBuilder;
 import ${config.project.packageName}.controller.helper.DataSetBuilder;
+
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.model.value.${modelData.className}Value;
 import ${config.project.packageName}.controller.AbstractAppController; 
 import ${config.project.packageName}.service.ServiceLocator; 
 import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.service.${modelData.className}Service; 
+import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.controller.form.${modelData.className}Form; 
 
 @Controller
 @RequestMapping("/${modelData.className.toLowerCase()}")
@@ -28,7 +30,7 @@ public class ${modelData.className}Controller extends AbstractAppController<${mo
 	@Override
     protected DataSetBuilder getDataSetBuilder(String fieldSetName) {
 		Enum<?> fieldSet = getFieldSet(fieldSetName);
-        return new ${modelData.className}DataSetBuilder(fieldSet,new ${modelData.className}Value());
+        return new ${modelData.className}DataSetBuilder(fieldSet,new ${modelData.className}Form());
     }
 
     public ${modelData.className}Value.${modelData.className}Dataset getFieldSet(String fieldSet){

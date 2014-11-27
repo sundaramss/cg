@@ -328,4 +328,24 @@ class ModelHelper {
         }
         return parentModels;
     }
+    def getDefaultValueForType(type){
+        def value = null;
+        if(type in premitives){
+            switch(type){
+                case 'int':
+                    value='0';
+                    break;
+                case 'long':
+                    value='0L';
+                    break;
+                case 'float':
+                    value='0.0f';
+                    break;
+                case 'long':
+                    value='0.0D';
+                    break;
+            }
+        }
+        return value;
+    }
 }

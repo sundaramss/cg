@@ -4,7 +4,7 @@
 	"tableName":"T_EMP_DEPARTMENT",
 	"recordLog":"true",
 	"pk" : { "colName" : "dpt_sk_guid", "type" :"String","colType":"varchar","colSize":"50" },
-	"columns" : [ {"name":"name", "colName":"dpt_name","type":"String","lpk":"true","colType":"varchar","colSize":"10"} ,
-				  {"name":"description","colName":"dpt_description","type":"String","colType":"varchar","colSize":"50"}, 
+	"columns" : [ {"name":"name", "colName":"dpt_name","type":"String","lpk":"true","colType":"varchar","colSize":"10", "formName":"deptName"} ,
+				  {"name":"description","colName":"dpt_description","type":"String","colType":"varchar","colSize":"50","formName":"deptDesc"}                 
 	            ]
 }
