@@ -1,9 +1,12 @@
 <%
 	def classRef = modelData.className[0].toLowerCase()+modelData.className[1..-1]
-	
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def manyToOneModels = modelHelper.getManyToOne(manyToOneFields,models).toSet();
 %>package ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.controller;
 
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,16 @@ import ${config.project.packageName}.${modelData.subsystem.toLowerCase()}.contro
 @Controller
 @RequestMapping("/${modelData.className.toLowerCase()}")
 public class ${modelData.className}Controller extends AbstractAppController<${modelData.className}Value> {
+    
+    <%if(manyToOneModels){%>private Map<String,String> keyMap;
+    @PostConstruct
+    public void init() {
+        keyMap = new HashMap<String,String>();<%manyToOneModels.each{ mtoModel-> def parentClassRef = modelHelper.getVariableRef(['name':mtoModel.className]); def formNameColumns = mtoModel.columns.findAll{it.formName}; formNameColumns.each {  column ->%> 
+        keyMap.put("${column.formName}","${parentClassRef}Value.${column.name}");<%}}%>
+    }    
+    protected String prepareKey(String key){
+            return keyMap.get(key);
+    }<%}%>
 
     protected ${modelData.className}Service getAppService() {
 		return ServiceLocator.getInstance().get${modelData.className}Service();
@@ -45,5 +58,5 @@ public class ${modelData.className}Controller extends AbstractAppController<${mo
             return ${modelData.className}Value.${modelData.className}Dataset.BUSINESS_KEY;
         }
     }
-	
+
 }

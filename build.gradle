@@ -309,8 +309,8 @@ class ModelHelper {
         def childModels = [];
         models.each{ model ->
             
-            def cols = model.columns*.manyToOne.findAll{it};
-            if( cols && cols.size() > 0 && model.className != className){
+            def cols = model.columns.collect{  if(it.manyToOne){ it.type} }.findAll{it};
+            if( cols.contains(className)){
                 childModels << model
             }
               

@@ -104,14 +104,16 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
         if(StringUtils.isNotBlank(sortByJson)){
             Map<String, String> sortOrderMap = requestParamParser.prepareSortByParamMap(sortByJson);
             for (Map.Entry<String, String> entry : sortOrderMap.entrySet()) {
-                dataSetBuilder.addSort(entry.getKey(),entry.getValue());
+                String key = prepareKey(entry.getKey());
+                dataSetBuilder.addSort(key,entry.getValue());
             }
         }
 
         if(StringUtils.isNotBlank(filterByJson)){
            List<RequestFilterValue> filterByList = requestParamParser.parseFilterBy(filterByJson);
            for(RequestFilterValue requestFilterValue:filterByList){
-               dataSetBuilder.addKey(requestFilterValue.getField())
+               String field = requestFilterValue.getField();
+               dataSetBuilder.addKey(field)
                        .addValue(requestFilterValue.getValue())
                        .addOperator(requestFilterValue.getOperator())
                        .next();
@@ -124,4 +126,7 @@ public abstract class AbstractAppController<MB extends ModelValueBean> implement
 
     protected abstract DataSetBuilder getDataSetBuilder(String fieldSetName);
 
+    protected String prepareKey(String key){
+            return key;
+    }
 }

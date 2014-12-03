@@ -1,11 +1,24 @@
 <%
 	def fields=[:]
 	def sortFields=[:]
+    def manyToOneFields = modelData.columns.findAll{it.manyToOne};
+    def manyToOneModels = modelHelper.getManyToOne(manyToOneFields,models);
 	modelData.columns.each{ column ->
-		fields.put(modelHelper.getVariableRef(column),""); 
-		if(column.sort){
-			sortFields.put(modelHelper.getVariableRef(column),"true"); 
-		}
+        if( ! column.manyToOne ){
+            fields.put(modelHelper.getVariableRef(column),""); 
+            if(column.sort){
+                sortFields.put(modelHelper.getVariableRef(column),"true"); 
+            }
+        }else{
+            def manyToOneModel = manyToOneModels.find{ model -> model.className == column.type };
+            //def parentModelFields = [:]; 
+            manyToOneModel.columns.each { parentColumn ->
+                    if( ! parentColumn.manyToOne ){
+                        fields.put(modelHelper.getVariableRef(["name":parentColumn.formName]),""); 
+                    }                
+            }
+            //fields.put(modelHelper.getVariableRef(column),parentModelFields); 
+        }
 	}
 	def url = "http://localhost:7070/${config.project.name}/rest/${modelData.className.toLowerCase()}/";
 	def jsonData=modelHelper.prepareJson(fields).replace("\"","\\\"")
